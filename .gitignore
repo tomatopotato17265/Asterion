@@ -17,6 +17,6 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
-worker/.dev.vars
-worker/.wrangler/
-worker/worker-configuration.d.ts
+shared/src/worker/.dev.vars
+shared/src/worker/.wrangler/
+shared/src/worker/worker-configuration.d.ts
