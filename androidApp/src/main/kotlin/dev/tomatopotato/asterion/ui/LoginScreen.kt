@@ -1,4 +1,4 @@
-package dev.tomatopotato.asterion
+package dev.tomatopotato.asterion.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -27,33 +27,31 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
-private const val TERMS_URL = "https://modrinth.com/legal/terms"
-private const val PRIVACY_URL = "https://modrinth.com/legal/privacy"
+private val ModrinthGreen = Color(0xFF1BD96A)
 
 @Composable
-@Preview
-fun LoginScreen(modifier: Modifier = Modifier) {
+fun LoginScreen(
+    modifier: Modifier = Modifier,
+    onSignInClick: () -> Unit = {},
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .safeContentPadding()
+            .safeDrawingPadding()
             .padding(horizontal = 24.dp, vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom,
     ) {
         Button(
-            onClick = {},
+            onClick = onSignInClick,
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF1BD96A),
+                containerColor = ModrinthGreen,
                 contentColor = Color.Black,
             ),
         ) {
-            Text(
-                text = "Sign in to Modrinth",
-                style = MaterialTheme.typography.titleMedium,
-            )
+            Text("Sign in to Modrinth", style = MaterialTheme.typography.titleMedium)
         }
 
         Spacer(Modifier.height(12.dp))
@@ -66,7 +64,6 @@ fun LoginScreen(modifier: Modifier = Modifier) {
             withLink(LinkAnnotation.Url("https://modrinth.com/legal/privacy", underlined)) { append("Privacy Policy") }
             append(".")
         }
-
         Text(
             text = disclaimer,
             style = MaterialTheme.typography.bodySmall,
@@ -74,4 +71,10 @@ fun LoginScreen(modifier: Modifier = Modifier) {
             textAlign = TextAlign.Center,
         )
     }
+}
+
+@Preview
+@Composable
+private fun LoginScreenPreview() {
+    AsterionTheme { LoginScreen() }
 }
