@@ -82,6 +82,7 @@ class AuthViewModel(
     }
 
     fun signOut() {
+        expectedState = ""
         TokenStore(getApplication()).clear()
         phase = AuthPhase.SignedOut
     }

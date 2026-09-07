@@ -38,6 +38,7 @@ private enum class Tab(val label: String, @DrawableRes val icon: Int) {
 @Composable
 fun MainTabScreen(
     account: AccountViewModel,
+    onSignOut: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LaunchedEffect(Unit) { account.load() }
@@ -81,7 +82,7 @@ fun MainTabScreen(
                 Tab.Analytics -> AnalyticsScreen()
                 Tab.Payouts -> PayoutsScreen()
                 Tab.Inbox -> InboxScreen()
-                Tab.Account -> AccountScreen()
+                Tab.Account -> AccountScreen(onSignOut = onSignOut)
             }
         }
     }

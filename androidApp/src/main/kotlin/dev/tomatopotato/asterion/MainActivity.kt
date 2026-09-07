@@ -42,7 +42,13 @@ class MainActivity : ComponentActivity() {
             AsterionTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     when (val phase = auth.phase) {
-                        AuthPhase.SignedIn -> MainTabScreen(account = account)
+                        AuthPhase.SignedIn -> MainTabScreen(
+                            account = account,
+                            onSignOut = {
+                                account.reset()
+                                auth.signOut()
+                            },
+                        )
 
                         AuthPhase.Authorizing, AuthPhase.Exchanging -> Box(
                             modifier = Modifier.fillMaxSize(),

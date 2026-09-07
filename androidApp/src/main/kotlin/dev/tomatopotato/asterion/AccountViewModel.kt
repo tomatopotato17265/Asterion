@@ -43,6 +43,12 @@ class AccountViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    fun reset() {
+        username = null
+        avatar = null
+        loaded = false
+    }
+
     private fun decodeSampled(bytes: ByteArray, targetPx: Int): android.graphics.Bitmap? {
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
