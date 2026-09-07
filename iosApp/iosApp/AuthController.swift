@@ -43,6 +43,7 @@ final class AuthController: NSObject, ASWebAuthenticationPresentationContextProv
             self?.handleCallback(url: callbackURL, error: error)
         }
         session.presentationContextProvider = self
+        session.prefersEphemeralWebBrowserSession = true
         self.session = session
         phase = .authenticating
         if !session.start() {
@@ -98,6 +99,9 @@ final class AuthController: NSObject, ASWebAuthenticationPresentationContextProv
     }
 
     func signOut() {
+        session?.cancel()
+        session = nil
+        expectedState = ""
         TokenStore.clear()
         phase = .signedOut
     }

@@ -29,6 +29,12 @@ final class AccountStore {
         } catch {}
     }
 
+    func reset() {
+        username = nil
+        avatarTabImage = nil
+        didLoad = false
+    }
+
     private static func circularTabIcon(from image: UIImage) -> UIImage {
         let side: CGFloat = 25
         let size = CGSize(width: side, height: side)
