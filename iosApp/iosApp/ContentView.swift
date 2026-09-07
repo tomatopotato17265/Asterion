@@ -16,7 +16,7 @@ struct ContentView: View {
     private var content: some View {
         switch auth.phase {
         case .signedIn:
-            ProjectsView()
+            MainTabView()
         case .exchanging:
             ProgressView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -114,4 +114,5 @@ private struct GlassSheen: ViewModifier {
 #Preview {
     ContentView()
         .environment(AuthController())
+        .environment(AccountStore())
 }

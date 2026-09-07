@@ -6,6 +6,7 @@ import kotlin.random.Random
 object AuthConfig {
     const val CLIENT_ID: String = "xAS89yPM"
     const val TOKEN_ENDPOINT: String = "https://asterion.tomatopotato17265.workers.dev/token"
+    const val USER_ENDPOINT: String = "https://api.modrinth.com/v2/user"
     const val AUTHORIZE_URL: String = "https://modrinth.com/auth/authorize"
     const val SCOPES: String = "USER_READ"
     const val USE_VERIFIED_HTTPS_CALLBACK: Boolean = false

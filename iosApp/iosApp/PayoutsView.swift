@@ -1,11 +1,11 @@
 import SwiftUI
 
-struct ProjectsView: View {
+struct PayoutsView: View {
     var body: some View {
         Color(.systemBackground).ignoresSafeArea()
     }
 }
 
 #Preview {
-    ProjectsView()
+    PayoutsView()
 }
