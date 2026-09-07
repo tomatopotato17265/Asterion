@@ -5,7 +5,7 @@ struct MainTabView: View {
     @State private var selection: TabItem = .projects
 
     enum TabItem: Hashable {
-        case projects, analytics, payouts, account
+        case projects, analytics, payouts, inbox, account
     }
 
     var body: some View {
@@ -21,6 +21,10 @@ struct MainTabView: View {
             PayoutsView()
                 .tabItem { Label("Payouts", systemImage: "dollarsign") }
                 .tag(TabItem.payouts)
+
+            InboxView()
+                .tabItem { Label("Inbox", systemImage: "tray") }
+                .tag(TabItem.inbox)
 
             AccountView()
                 .tabItem { accountTabLabel }

@@ -31,6 +31,7 @@ private enum class Tab(val label: String, @DrawableRes val icon: Int) {
     Projects("Projects", R.drawable.ic_tab_projects),
     Analytics("Analytics", R.drawable.ic_tab_analytics),
     Payouts("Payouts", R.drawable.ic_tab_payouts),
+    Inbox("Inbox", R.drawable.ic_tab_inbox),
     Account("Account", R.drawable.ic_tab_account),
 }
 
@@ -79,6 +80,7 @@ fun MainTabScreen(
                 Tab.Projects -> ProjectsScreen()
                 Tab.Analytics -> AnalyticsScreen()
                 Tab.Payouts -> PayoutsScreen()
+                Tab.Inbox -> InboxScreen()
                 Tab.Account -> AccountScreen()
             }
         }
