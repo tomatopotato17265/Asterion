@@ -8,6 +8,11 @@ struct AccountView: View {
     var body: some View {
         List {
             Section {
+                profileCard
+                    .listRowInsets(EdgeInsets(top: 20, leading: 16, bottom: 20, trailing: 16))
+            }
+
+            Section {
                 Button(role: .destructive) {
                     confirmingSignOut = true
                 } label: {
@@ -25,6 +30,44 @@ struct AccountView: View {
         } message: {
             Text("Are you sure you want to sign out? You'll need to sign in again.")
         }
+    }
+
+    private var profileCard: some View {
+        HStack(spacing: 16) {
+            avatarView
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(account.username ?? "")
+                    .font(.inter(.bold, size: 20, relativeTo: .title3))
+
+                if let bio = account.bio,
+                   !bio.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    Text(bio)
+                        .font(.inter(.regular, size: 15, relativeTo: .subheadline))
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            Spacer(minLength: 0)
+        }
+    }
+
+    @ViewBuilder
+    private var avatarView: some View {
+        Group {
+            if let image = account.avatarImage {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                Image(systemName: "person.crop.circle.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .frame(width: 60, height: 60)
+        .clipShape(Circle())
     }
 }
 

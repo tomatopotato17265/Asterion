@@ -7,6 +7,8 @@ import UIKit
 final class AccountStore {
 
     private(set) var username: String?
+    private(set) var bio: String?
+    private(set) var avatarImage: UIImage?
     private(set) var avatarTabImage: UIImage?
 
     private let client = ModrinthUserClient()
@@ -19,9 +21,11 @@ final class AccountStore {
         do {
             let user = try await client.fetchCurrentUser(accessToken: token)
             username = user.username
+            bio = user.bio
             if let urlString = user.avatarUrl, let url = URL(string: urlString) {
                 let (data, _) = try await URLSession.shared.data(from: url)
                 if let image = UIImage(data: data) {
+                    avatarImage = image
                     avatarTabImage = Self.circularTabIcon(from: image)
                 }
             }
@@ -31,6 +35,8 @@ final class AccountStore {
 
     func reset() {
         username = nil
+        bio = nil
+        avatarImage = nil
         avatarTabImage = nil
         didLoad = false
     }

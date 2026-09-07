@@ -14,6 +14,7 @@ import kotlinx.serialization.json.Json
 data class ModrinthUser(
     val id: String,
     val username: String,
+    val bio: String? = null,
     @SerialName("avatar_url") val avatarUrl: String? = null,
 )
 
