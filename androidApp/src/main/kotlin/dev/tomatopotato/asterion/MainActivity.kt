@@ -18,10 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import dev.tomatopotato.asterion.ui.AsterionTheme
 import dev.tomatopotato.asterion.ui.LoginScreen
-import dev.tomatopotato.asterion.ui.ProjectsScreen
+import dev.tomatopotato.asterion.ui.MainTabScreen
 
 class MainActivity : ComponentActivity() {
     private val auth: AuthViewModel by viewModels()
+    private val account: AccountViewModel by viewModels()
     private val authTabLauncher =
         AuthTabIntent.registerActivityResultLauncher(this) { result ->
             when (result.resultCode) {
@@ -41,7 +42,7 @@ class MainActivity : ComponentActivity() {
             AsterionTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     when (val phase = auth.phase) {
-                        AuthPhase.SignedIn -> ProjectsScreen()
+                        AuthPhase.SignedIn -> MainTabScreen(account = account)
 
                         AuthPhase.Authorizing, AuthPhase.Exchanging -> Box(
                             modifier = Modifier.fillMaxSize(),

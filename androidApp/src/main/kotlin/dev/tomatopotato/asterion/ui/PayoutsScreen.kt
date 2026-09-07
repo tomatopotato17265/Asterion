@@ -9,12 +9,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun ProjectsScreen(modifier: Modifier = Modifier) {
+fun PayoutsScreen(modifier: Modifier = Modifier) {
     Box(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background))
 }
 
 @Preview
 @Composable
-private fun ProjectsScreenPreview() {
-    AsterionTheme { ProjectsScreen() }
+private fun PayoutsScreenPreview() {
+    AsterionTheme { PayoutsScreen() }
 }
