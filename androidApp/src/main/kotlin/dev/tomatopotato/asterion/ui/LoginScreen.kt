@@ -33,6 +33,7 @@ private val ModrinthGreen = Color(0xFF1BD96A)
 fun LoginScreen(
     modifier: Modifier = Modifier,
     onSignInClick: () -> Unit = {},
+    errorMessage: String? = null,
 ) {
     Column(
         modifier = modifier
@@ -42,6 +43,16 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom,
     ) {
+        if (errorMessage != null) {
+            Text(
+                text = errorMessage,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(Modifier.height(12.dp))
+        }
+
         Button(
             onClick = onSignInClick,
             modifier = Modifier.fillMaxWidth(),

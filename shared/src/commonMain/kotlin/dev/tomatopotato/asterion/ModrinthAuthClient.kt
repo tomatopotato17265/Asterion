@@ -25,12 +25,12 @@ data class ModrinthToken(
     @SerialName("expires_in") val expiresIn: Long = 0,
 )
 
-class ModrinthAuthClient(
+class ModrinthAuthClient {
     private val http: HttpClient = HttpClient {
         expectSuccess = true
         install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
-    },
-) {
+    }
+
     suspend fun exchangeCode(code: String): ModrinthToken =
         http.post(AuthConfig.TOKEN_ENDPOINT) {
             contentType(ContentType.Application.Json)

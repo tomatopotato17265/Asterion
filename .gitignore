@@ -17,6 +17,6 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
-shared/src/worker/.dev.vars
+iosApp/Configuration/Secrets.xcconfig
 shared/src/worker/.wrangler/
 shared/src/worker/worker-configuration.d.ts

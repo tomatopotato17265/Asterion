@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["<APPLE_TEAM_ID>.dev.tomatopotato.asterion.Asterion"],
+        "components": [{ "/": "/callback*" }]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": ["<APPLE_TEAM_ID>.dev.tomatopotato.asterion.Asterion"]
+  }
+}
