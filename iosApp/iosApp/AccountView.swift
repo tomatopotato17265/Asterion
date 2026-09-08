@@ -13,6 +13,23 @@ struct AccountView: View {
             }
 
             Section {
+                Button {
+                } label: {
+                    HStack {
+                        Text("Switch Account")
+                            .font(.inter(.regular, size: 17, relativeTo: .body))
+
+                        Spacer()
+
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(.tertiary)
+                    }
+                    .foregroundStyle(.primary)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+
                 Button(role: .destructive) {
                     confirmingSignOut = true
                 } label: {
