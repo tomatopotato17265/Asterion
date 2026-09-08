@@ -82,7 +82,7 @@ fun MainTabScreen(
                 Tab.Analytics -> AnalyticsScreen()
                 Tab.Payouts -> PayoutsScreen()
                 Tab.Inbox -> InboxScreen()
-                Tab.Account -> AccountScreen(onSignOut = onSignOut)
+                Tab.Account -> AccountScreen(account = account, onSignOut = onSignOut)
             }
         }
     }

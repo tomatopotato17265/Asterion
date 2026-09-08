@@ -19,6 +19,9 @@ class AccountViewModel(app: Application) : AndroidViewModel(app) {
     var username by mutableStateOf<String?>(null)
         private set
 
+    var bio by mutableStateOf<String?>(null)
+        private set
+
     var avatar by mutableStateOf<ImageBitmap?>(null)
         private set
 
@@ -33,6 +36,7 @@ class AccountViewModel(app: Application) : AndroidViewModel(app) {
             runCatching {
                 val user = client.fetchCurrentUser(token)
                 username = user.username
+                bio = user.bio
                 user.avatarUrl?.let { url ->
                     withContext(Dispatchers.IO) {
                         val bytes = URL(url).openStream().use { it.readBytes() }
@@ -45,6 +49,7 @@ class AccountViewModel(app: Application) : AndroidViewModel(app) {
 
     fun reset() {
         username = null
+        bio = null
         avatar = null
         loaded = false
     }

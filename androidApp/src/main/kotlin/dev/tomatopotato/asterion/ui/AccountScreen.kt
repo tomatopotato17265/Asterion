@@ -1,13 +1,19 @@
 package dev.tomatopotato.asterion.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -17,12 +23,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.tomatopotato.asterion.AccountViewModel
+import dev.tomatopotato.asterion.R
 
 @Composable
 fun AccountScreen(
+    account: AccountViewModel,
     onSignOut: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -34,7 +49,14 @@ fun AccountScreen(
             .background(MaterialTheme.colorScheme.background)
             .safeDrawingPadding()
             .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        ProfileCard(
+            username = account.username,
+            bio = account.bio,
+            avatar = account.avatar,
+        )
+
         Surface(
             onClick = { confirmingSignOut = true },
             shape = RoundedCornerShape(28.dp),
@@ -74,8 +96,54 @@ fun AccountScreen(
     }
 }
 
-@Preview
 @Composable
-private fun AccountScreenPreview() {
-    AsterionTheme { AccountScreen(onSignOut = {}) }
+private fun ProfileCard(
+    username: String?,
+    bio: String?,
+    avatar: ImageBitmap?,
+) {
+    Surface(
+        shape = RoundedCornerShape(28.dp),
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (avatar != null) {
+                Image(
+                    bitmap = avatar,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(60.dp)
+                        .clip(CircleShape),
+                )
+            } else {
+                Icon(
+                    painter = painterResource(R.drawable.ic_tab_account),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(60.dp),
+                )
+            }
+
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    text = username ?: "",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                )
+                if (!bio.isNullOrBlank()) {
+                    Text(
+                        text = bio,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        }
+    }
 }
