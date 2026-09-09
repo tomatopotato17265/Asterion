@@ -44,6 +44,12 @@ fun AccountScreen(
     modifier: Modifier = Modifier,
 ) {
     var confirmingSignOut by rememberSaveable { mutableStateOf(false) }
+    var showingSwitchAccount by rememberSaveable { mutableStateOf(false) }
+
+    if (showingSwitchAccount) {
+        SwitchAccountScreen(onBack = { showingSwitchAccount = false }, modifier = modifier)
+        return
+    }
 
     Column(
         modifier = modifier
@@ -68,7 +74,7 @@ fun AccountScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable {}
+                        .clickable { showingSwitchAccount = true }
                         .padding(horizontal = 20.dp, vertical = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {

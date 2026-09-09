@@ -6,46 +6,40 @@ struct AccountView: View {
     @State private var confirmingSignOut = false
 
     var body: some View {
-        List {
-            Section {
-                profileCard
-                    .listRowInsets(EdgeInsets(top: 20, leading: 16, bottom: 20, trailing: 16))
-            }
+        NavigationStack {
+            List {
+                Section {
+                    profileCard
+                        .listRowInsets(EdgeInsets(top: 20, leading: 16, bottom: 20, trailing: 16))
+                }
 
-            Section {
-                Button {
-                } label: {
-                    HStack {
+                Section {
+                    NavigationLink {
+                        SwitchAccountView()
+                    } label: {
                         Text("Switch Account")
                             .font(.inter(.regular, size: 17, relativeTo: .body))
-
-                        Spacer()
-
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundStyle(.tertiary)
                     }
-                    .foregroundStyle(.primary)
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
 
-                Button(role: .destructive) {
-                    confirmingSignOut = true
-                } label: {
-                    Text("Sign Out")
-                        .font(.inter(.regular, size: 17, relativeTo: .body))
+                    Button(role: .destructive) {
+                        confirmingSignOut = true
+                    } label: {
+                        Text("Sign Out")
+                            .font(.inter(.regular, size: 17, relativeTo: .body))
+                    }
                 }
             }
-        }
-        .alert("Sign Out", isPresented: $confirmingSignOut) {
-            Button("Cancel", role: .cancel) {}
-            Button("Sign Out", role: .destructive) {
-                account.reset()
-                auth.signOut()
+            .navigationTitle("Account")
+            .navigationBarTitleDisplayMode(.inline)
+            .alert("Sign Out", isPresented: $confirmingSignOut) {
+                Button("Cancel", role: .cancel) {}
+                Button("Sign Out", role: .destructive) {
+                    account.reset()
+                    auth.signOut()
+                }
+            } message: {
+                Text("Are you sure you want to sign out? You'll need to sign in again.")
             }
-        } message: {
-            Text("Are you sure you want to sign out? You'll need to sign in again.")
         }
     }
 
