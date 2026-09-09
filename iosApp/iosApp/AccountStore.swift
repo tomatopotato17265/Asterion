@@ -20,6 +20,7 @@ final class AccountStore {
 
         do {
             let user = try await client.fetchCurrentUser(accessToken: token)
+            TokenStore.saveUserID(user.id)
             username = user.username
             bio = user.bio
             if let urlString = user.avatarUrl, let url = URL(string: urlString) {

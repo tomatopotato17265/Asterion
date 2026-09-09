@@ -86,4 +86,5 @@ struct AccountView: View {
     AccountView()
         .environment(AuthController())
         .environment(AccountStore())
+        .environment(AddedAccountsStore())
 }

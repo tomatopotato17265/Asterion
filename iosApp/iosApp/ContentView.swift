@@ -115,4 +115,5 @@ private struct GlassSheen: ViewModifier {
     ContentView()
         .environment(AuthController())
         .environment(AccountStore())
+        .environment(AddedAccountsStore())
 }
