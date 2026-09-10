@@ -28,6 +28,11 @@ class TokenStore(context: Context) {
     }
 
     fun accessToken(): String? = prefs.getString(KEY_TOKEN, null)
+    fun saveUserID(id: String) {
+        prefs.edit().putString(KEY_USER_ID, id).apply()
+    }
+
+    fun userID(): String? = prefs.getString(KEY_USER_ID, null)
 
     fun clear() {
         prefs.edit().clear().apply()
@@ -36,5 +41,6 @@ class TokenStore(context: Context) {
     private companion object {
         const val KEY_TOKEN = "modrinth.accessToken"
         const val KEY_EXPIRES_AT = "modrinth.expiresAt"
+        const val KEY_USER_ID = "modrinth.userId"
     }
 }

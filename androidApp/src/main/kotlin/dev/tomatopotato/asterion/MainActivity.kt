@@ -23,6 +23,7 @@ import dev.tomatopotato.asterion.ui.MainTabScreen
 class MainActivity : ComponentActivity() {
     private val auth: AuthViewModel by viewModels()
     private val account: AccountViewModel by viewModels()
+    private val addAccount: AddAccountViewModel by viewModels()
     private val authTabLauncher =
         AuthTabIntent.registerActivityResultLauncher(this) { result ->
             when (result.resultCode) {
@@ -30,6 +31,15 @@ class MainActivity : ComponentActivity() {
                 AuthTabIntent.RESULT_CANCELED -> auth.onCancelled()
                 AuthTabIntent.RESULT_VERIFICATION_FAILED,
                 AuthTabIntent.RESULT_VERIFICATION_TIMED_OUT -> auth.onVerificationFailed()
+            }
+        }
+    private val addAccountTabLauncher =
+        AuthTabIntent.registerActivityResultLauncher(this) { result ->
+            when (result.resultCode) {
+                AuthTabIntent.RESULT_OK -> addAccount.onCallback(result.resultUri)
+                AuthTabIntent.RESULT_CANCELED -> addAccount.onCancelled()
+                AuthTabIntent.RESULT_VERIFICATION_FAILED,
+                AuthTabIntent.RESULT_VERIFICATION_TIMED_OUT -> addAccount.onVerificationFailed()
             }
         }
 
@@ -44,10 +54,12 @@ class MainActivity : ComponentActivity() {
                     when (val phase = auth.phase) {
                         AuthPhase.SignedIn -> MainTabScreen(
                             account = account,
+                            addAccount = addAccount,
                             onSignOut = {
                                 account.reset()
                                 auth.signOut()
                             },
+                            onAddAccount = ::startAddAccount,
                         )
 
                         AuthPhase.Authorizing, AuthPhase.Exchanging -> Box(
@@ -57,9 +69,11 @@ class MainActivity : ComponentActivity() {
                             CircularProgressIndicator()
                         }
 
-                        else -> LoginScreen(
-                            onSignInClick = ::startLogin,
-                            errorMessage = (phase as? AuthPhase.Failed)?.message,
+                        else -> MainTabScreen(
+                            account = account,
+                            addAccount = addAccount,
+                            onSignOut = { account.reset(); auth.signOut() },
+                            onAddAccount = ::startAddAccount,
                         )
                     }
                 }
@@ -77,6 +91,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun startAddAccount() {
+        val authorizeUrl = addAccount.beginAuthorize()
+        val authTab = AuthTabIntent.Builder().build()
+        if (AuthConfig.USE_VERIFIED_HTTPS_CALLBACK) {
+            authTab.launch(addAccountTabLauncher, authorizeUrl, AuthConfig.CALLBACK_HOST, AuthConfig.CALLBACK_PATH)
+        } else {
+            authTab.launch(addAccountTabLauncher, authorizeUrl, AuthConfig.CALLBACK_SCHEME)
+        }
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
@@ -84,8 +108,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleRedirect(intent: Intent?) {
-        val data: Uri? = intent?.takeIf { it.action == Intent.ACTION_VIEW }?.data
-        if (data != null) auth.onCallback(data)
+        val data: Uri = intent?.takeIf { it.action == Intent.ACTION_VIEW }?.data ?: return
+        if (addAccount.isAwaitingCallback) addAccount.onCallback(data) else auth.onCallback(data)
     }
 }
 

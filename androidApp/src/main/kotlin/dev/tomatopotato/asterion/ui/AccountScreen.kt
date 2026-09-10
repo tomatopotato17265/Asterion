@@ -35,19 +35,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.tomatopotato.asterion.AccountViewModel
+import dev.tomatopotato.asterion.AddAccountViewModel
 import dev.tomatopotato.asterion.R
 
 @Composable
 fun AccountScreen(
     account: AccountViewModel,
+    addAccount: AddAccountViewModel,
     onSignOut: () -> Unit,
+    onAddAccount: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var confirmingSignOut by rememberSaveable { mutableStateOf(false) }
-    var showingSwitchAccount by rememberSaveable { mutableStateOf(false) }
+    var showingSwitchAccount by rememberSaveable { mutableStateOf(true) } // TEMP verification
 
     if (showingSwitchAccount) {
-        SwitchAccountScreen(onBack = { showingSwitchAccount = false }, modifier = modifier)
+        SwitchAccountScreen(
+            addAccount = addAccount,
+            onAddAccount = onAddAccount,
+            onBack = { showingSwitchAccount = false },
+            modifier = modifier,
+        )
         return
     }
 

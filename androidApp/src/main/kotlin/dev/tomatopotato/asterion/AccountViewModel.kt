@@ -35,6 +35,7 @@ class AccountViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             runCatching {
                 val user = client.fetchCurrentUser(token)
+                TokenStore(getApplication()).saveUserID(user.id)
                 username = user.username
                 bio = user.bio
                 user.avatarUrl?.let { url ->

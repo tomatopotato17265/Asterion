@@ -25,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.tomatopotato.asterion.AccountViewModel
+import dev.tomatopotato.asterion.AddAccountViewModel
 import dev.tomatopotato.asterion.R
 
 private enum class Tab(val label: String, @DrawableRes val icon: Int) {
@@ -38,11 +39,13 @@ private enum class Tab(val label: String, @DrawableRes val icon: Int) {
 @Composable
 fun MainTabScreen(
     account: AccountViewModel,
+    addAccount: AddAccountViewModel,
     onSignOut: () -> Unit,
+    onAddAccount: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LaunchedEffect(Unit) { account.load() }
-    var selected by rememberSaveable { mutableIntStateOf(0) }
+    var selected by rememberSaveable { mutableIntStateOf(4) } // TEMP verification
     val avatar = account.avatar
 
     Scaffold(
@@ -82,7 +85,12 @@ fun MainTabScreen(
                 Tab.Analytics -> AnalyticsScreen()
                 Tab.Payouts -> PayoutsScreen()
                 Tab.Inbox -> InboxScreen()
-                Tab.Account -> AccountScreen(account = account, onSignOut = onSignOut)
+                Tab.Account -> AccountScreen(
+                    account = account,
+                    addAccount = addAccount,
+                    onSignOut = onSignOut,
+                    onAddAccount = onAddAccount,
+                )
             }
         }
     }
