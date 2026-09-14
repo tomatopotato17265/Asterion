@@ -30,3 +30,8 @@ Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
 ---
 
 Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+
+### Credits
+
+This project was made possible thanks to the [Modrinth API](https://docs.modrinth.com/api/) and [Modrinth being open-source](https://github.com/modrinth/code).
+MASSIVE thanks to **samalando1034** on Discord for providing his server for testing purposes.

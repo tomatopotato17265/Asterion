@@ -5,7 +5,7 @@ struct MainTabView: View {
     @State private var selection: TabItem = .projects
 
     enum TabItem: Hashable {
-        case projects, analytics, payouts, inbox, account
+        case projects, servers, analytics, payouts, inbox, account
     }
 
     var body: some View {
@@ -13,6 +13,10 @@ struct MainTabView: View {
             ProjectsView()
                 .tabItem { Label("Projects", systemImage: "square.grid.2x2") }
                 .tag(TabItem.projects)
+
+            ServersView()
+                .tabItem { Label("Servers", systemImage: "server.rack") }
+                .tag(TabItem.servers)
 
             AnalyticsView()
                 .tabItem { Label("Analytics", systemImage: "chart.bar.xaxis") }
@@ -61,4 +65,5 @@ private struct GlassTabBar: ViewModifier {
 #Preview {
     MainTabView()
         .environment(AccountStore())
+        .environment(ServersStore())
 }

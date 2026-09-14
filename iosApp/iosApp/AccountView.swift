@@ -3,6 +3,7 @@ import SwiftUI
 struct AccountView: View {
     @Environment(AuthController.self) private var auth
     @Environment(AccountStore.self) private var account
+    @Environment(ServersStore.self) private var servers
     @State private var confirmingSignOut = false
 
     var body: some View {
@@ -35,6 +36,7 @@ struct AccountView: View {
                 Button("Cancel", role: .cancel) {}
                 Button("Sign Out", role: .destructive) {
                     account.reset()
+                    servers.reset()
                     auth.signOut()
                 }
             } message: {
@@ -87,4 +89,5 @@ struct AccountView: View {
         .environment(AuthController())
         .environment(AccountStore())
         .environment(AddedAccountsStore())
+        .environment(ServersStore())
 }
