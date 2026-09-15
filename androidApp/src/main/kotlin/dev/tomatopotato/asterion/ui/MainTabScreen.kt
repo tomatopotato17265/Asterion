@@ -27,9 +27,11 @@ import androidx.compose.ui.unit.dp
 import dev.tomatopotato.asterion.AccountViewModel
 import dev.tomatopotato.asterion.AddAccountViewModel
 import dev.tomatopotato.asterion.R
+import dev.tomatopotato.asterion.ServersViewModel
 
 private enum class Tab(val label: String, @DrawableRes val icon: Int) {
     Projects("Projects", R.drawable.ic_tab_projects),
+    Servers("Servers", R.drawable.ic_tab_servers),
     Analytics("Analytics", R.drawable.ic_tab_analytics),
     Payouts("Payouts", R.drawable.ic_tab_payouts),
     Inbox("Inbox", R.drawable.ic_tab_inbox),
@@ -40,6 +42,7 @@ private enum class Tab(val label: String, @DrawableRes val icon: Int) {
 fun MainTabScreen(
     account: AccountViewModel,
     addAccount: AddAccountViewModel,
+    servers: ServersViewModel,
     onSignOut: () -> Unit,
     onAddAccount: () -> Unit,
     modifier: Modifier = Modifier,
@@ -82,6 +85,7 @@ fun MainTabScreen(
         Box(Modifier.fillMaxSize().padding(innerPadding)) {
             when (Tab.entries[selected]) {
                 Tab.Projects -> ProjectsScreen()
+                Tab.Servers -> ServersScreen(viewModel = servers)
                 Tab.Analytics -> AnalyticsScreen()
                 Tab.Payouts -> PayoutsScreen()
                 Tab.Inbox -> InboxScreen()

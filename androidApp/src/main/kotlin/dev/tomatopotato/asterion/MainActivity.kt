@@ -24,6 +24,7 @@ class MainActivity : ComponentActivity() {
     private val auth: AuthViewModel by viewModels()
     private val account: AccountViewModel by viewModels()
     private val addAccount: AddAccountViewModel by viewModels()
+    private val servers: ServersViewModel by viewModels()
     private val authTabLauncher =
         AuthTabIntent.registerActivityResultLauncher(this) { result ->
             when (result.resultCode) {
@@ -55,6 +56,7 @@ class MainActivity : ComponentActivity() {
                         AuthPhase.SignedIn -> MainTabScreen(
                             account = account,
                             addAccount = addAccount,
+                            servers = servers,
                             onSignOut = {
                                 account.reset()
                                 auth.signOut()
@@ -72,6 +74,7 @@ class MainActivity : ComponentActivity() {
                         else -> MainTabScreen(
                             account = account,
                             addAccount = addAccount,
+                            servers = servers,
                             onSignOut = { account.reset(); auth.signOut() },
                             onAddAccount = ::startAddAccount,
                         )
