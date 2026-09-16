@@ -22,6 +22,10 @@ struct MainTabView: View {
                 .tabItem { Label("Analytics", systemImage: "chart.bar.xaxis") }
                 .tag(TabItem.analytics)
 
+            AccountView()
+                .tabItem { accountTabLabel }
+                .tag(TabItem.account)
+
             PayoutsView()
                 .tabItem { Label("Payouts", systemImage: "dollarsign") }
                 .tag(TabItem.payouts)
@@ -29,10 +33,6 @@ struct MainTabView: View {
             InboxView()
                 .tabItem { Label("Inbox", systemImage: "tray") }
                 .tag(TabItem.inbox)
-
-            AccountView()
-                .tabItem { accountTabLabel }
-                .tag(TabItem.account)
         }
         .modifier(GlassTabBar())
         .task { await account.load() }

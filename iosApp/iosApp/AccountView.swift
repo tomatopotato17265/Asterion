@@ -16,6 +16,15 @@ struct AccountView: View {
 
                 Section {
                     NavigationLink {
+                        SettingsView()
+                    } label: {
+                        Text("Settings")
+                            .font(.inter(.regular, size: 17, relativeTo: .body))
+                    }
+                }
+
+                Section {
+                    NavigationLink {
                         SwitchAccountView()
                     } label: {
                         Text("Switch Account")

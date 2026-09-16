@@ -47,13 +47,22 @@ fun AccountScreen(
     modifier: Modifier = Modifier,
 ) {
     var confirmingSignOut by rememberSaveable { mutableStateOf(false) }
-    var showingSwitchAccount by rememberSaveable { mutableStateOf(true) } // TEMP verification
+    var showingSwitchAccount by rememberSaveable { mutableStateOf(false) }
+    var showingSettings by rememberSaveable { mutableStateOf(false) }
 
     if (showingSwitchAccount) {
         SwitchAccountScreen(
             addAccount = addAccount,
             onAddAccount = onAddAccount,
             onBack = { showingSwitchAccount = false },
+            modifier = modifier,
+        )
+        return
+    }
+
+    if (showingSettings) {
+        SettingsScreen(
+            onBack = { showingSettings = false },
             modifier = modifier,
         )
         return
@@ -72,6 +81,33 @@ fun AccountScreen(
             bio = account.bio,
             avatar = account.avatar,
         )
+
+        Surface(
+            shape = RoundedCornerShape(28.dp),
+            color = MaterialTheme.colorScheme.surfaceContainer,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { showingSettings = true }
+                    .padding(horizontal = 20.dp, vertical = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "Settings",
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f),
+                )
+                Icon(
+                    painter = painterResource(R.drawable.ic_chevron_right),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
+        }
 
         Surface(
             shape = RoundedCornerShape(28.dp),
