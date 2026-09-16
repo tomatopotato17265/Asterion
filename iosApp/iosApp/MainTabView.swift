@@ -1,41 +1,57 @@
+import Shared
 import SwiftUI
 
 struct MainTabView: View {
     @Environment(AccountStore.self) private var account
-    @State private var selection: TabItem = .projects
-
-    enum TabItem: Hashable {
-        case projects, servers, analytics, payouts, inbox, account
-    }
+    @Environment(SelectedTabsStore.self) private var selectedTabs
+    @State private var selection: AppTab = .home
 
     var body: some View {
         TabView(selection: $selection) {
-            ProjectsView()
-                .tabItem { Label("Projects", systemImage: "square.grid.2x2") }
-                .tag(TabItem.projects)
+            tabContent(for: selectedTabs.visibleTabs[0])
+                .tabItem { tabLabel(for: selectedTabs.visibleTabs[0]) }
+                .tag(selectedTabs.visibleTabs[0])
 
-            ServersView()
-                .tabItem { Label("Servers", systemImage: "server.rack") }
-                .tag(TabItem.servers)
+            tabContent(for: selectedTabs.visibleTabs[1])
+                .tabItem { tabLabel(for: selectedTabs.visibleTabs[1]) }
+                .tag(selectedTabs.visibleTabs[1])
 
-            AnalyticsView()
-                .tabItem { Label("Analytics", systemImage: "chart.bar.xaxis") }
-                .tag(TabItem.analytics)
-
-            AccountView()
-                .tabItem { accountTabLabel }
-                .tag(TabItem.account)
-
-            PayoutsView()
-                .tabItem { Label("Payouts", systemImage: "dollarsign") }
-                .tag(TabItem.payouts)
+            tabContent(for: selectedTabs.visibleTabs[2])
+                .tabItem { tabLabel(for: selectedTabs.visibleTabs[2]) }
+                .tag(selectedTabs.visibleTabs[2])
 
             InboxView()
                 .tabItem { Label("Inbox", systemImage: "tray") }
-                .tag(TabItem.inbox)
+                .tag(AppTab.inbox)
+
+            AccountView()
+                .tabItem { accountTabLabel }
+                .tag(AppTab.account)
         }
         .modifier(GlassTabBar())
         .task { await account.load() }
+        .onAppear {
+            if !selectedTabs.visibleTabs.contains(selection) {
+                selection = selectedTabs.visibleTabs.first ?? .home
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func tabContent(for tab: AppTab) -> some View {
+        switch tab {
+        case .home: HomeView()
+        case .projects: ProjectsView()
+        case .servers: ServersView()
+        case .analytics: AnalyticsView()
+        case .payouts: PayoutsView()
+        default: EmptyView()
+        }
+    }
+
+    @ViewBuilder
+    private func tabLabel(for tab: AppTab) -> some View {
+        Label(tab.title, systemImage: tab.systemImage)
     }
 
     @ViewBuilder
@@ -66,4 +82,5 @@ private struct GlassTabBar: ViewModifier {
     MainTabView()
         .environment(AccountStore())
         .environment(ServersStore())
+        .environment(SelectedTabsStore())
 }
