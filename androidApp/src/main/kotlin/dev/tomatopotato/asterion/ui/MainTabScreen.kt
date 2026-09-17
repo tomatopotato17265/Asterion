@@ -1,6 +1,5 @@
 package dev.tomatopotato.asterion.ui
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -26,42 +25,37 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.tomatopotato.asterion.AccountViewModel
 import dev.tomatopotato.asterion.AddAccountViewModel
-import dev.tomatopotato.asterion.R
 import dev.tomatopotato.asterion.ServersViewModel
-
-private enum class Tab(val label: String, @DrawableRes val icon: Int) {
-    Projects("Projects", R.drawable.ic_tab_projects),
-    Servers("Servers", R.drawable.ic_tab_servers),
-    Analytics("Analytics", R.drawable.ic_tab_analytics),
-    Payouts("Payouts", R.drawable.ic_tab_payouts),
-    Inbox("Inbox", R.drawable.ic_tab_inbox),
-    Account("Account", R.drawable.ic_tab_account),
-}
+import dev.tomatopotato.asterion.TabsViewModel
+import dev.tomatopotato.asterion.tabs.AppTab
 
 @Composable
 fun MainTabScreen(
     account: AccountViewModel,
     addAccount: AddAccountViewModel,
     servers: ServersViewModel,
+    tabs: TabsViewModel,
     onSignOut: () -> Unit,
     onAddAccount: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LaunchedEffect(Unit) { account.load() }
-    var selected by rememberSaveable { mutableIntStateOf(4) } // TEMP verification
+    val visibleTabs = tabs.visibleTabs
+    var selected by rememberSaveable { mutableStateOf(visibleTabs.first()) }
+    if (selected !in visibleTabs) selected = visibleTabs.first()
     val avatar = account.avatar
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         bottomBar = {
             NavigationBar {
-                Tab.entries.forEachIndexed { index, tab ->
+                visibleTabs.forEach { tab ->
                     NavigationBarItem(
-                        selected = selected == index,
-                        onClick = { selected = index },
-                        label = { Text(tab.label) },
+                        selected = selected == tab,
+                        onClick = { selected = tab },
+                        label = { Text(tab.title) },
                         icon = {
-                            if (tab == Tab.Account && avatar != null) {
+                            if (tab == AppTab.ACCOUNT && avatar != null) {
                                 Image(
                                     bitmap = avatar,
                                     contentDescription = null,
@@ -72,7 +66,7 @@ fun MainTabScreen(
                                 )
                             } else {
                                 Icon(
-                                    painter = painterResource(tab.icon),
+                                    painter = painterResource(tab.iconRes),
                                     contentDescription = null,
                                 )
                             }
@@ -83,15 +77,17 @@ fun MainTabScreen(
         },
     ) { innerPadding ->
         Box(Modifier.fillMaxSize().padding(innerPadding)) {
-            when (Tab.entries[selected]) {
-                Tab.Projects -> ProjectsScreen()
-                Tab.Servers -> ServersScreen(viewModel = servers)
-                Tab.Analytics -> AnalyticsScreen()
-                Tab.Payouts -> PayoutsScreen()
-                Tab.Inbox -> InboxScreen()
-                Tab.Account -> AccountScreen(
+            when (selected) {
+                AppTab.HOME -> HomeScreen()
+                AppTab.PROJECTS -> ProjectsScreen()
+                AppTab.SERVERS -> ServersScreen(viewModel = servers)
+                AppTab.ANALYTICS -> AnalyticsScreen()
+                AppTab.PAYOUTS -> PayoutsScreen()
+                AppTab.INBOX -> InboxScreen()
+                AppTab.ACCOUNT -> AccountScreen(
                     account = account,
                     addAccount = addAccount,
+                    tabs = tabs,
                     onSignOut = onSignOut,
                     onAddAccount = onAddAccount,
                 )
@@ -107,16 +103,16 @@ private fun MainTabScreenPreview() {
         Scaffold(
             bottomBar = {
                 NavigationBar {
-                    Tab.entries.forEachIndexed { index, tab ->
+                    AppTab.entries.forEach { tab ->
                         NavigationBarItem(
-                            selected = index == 0,
+                            selected = tab == AppTab.HOME,
                             onClick = {},
-                            label = { Text(tab.label) },
-                            icon = { Icon(painterResource(tab.icon), contentDescription = null) },
+                            label = { Text(tab.title) },
+                            icon = { Icon(painterResource(tab.iconRes), contentDescription = null) },
                         )
                     }
                 }
             },
-        ) { padding -> Box(Modifier.fillMaxSize().padding(padding)) { ProjectsScreen() } }
+        ) { padding -> Box(Modifier.fillMaxSize().padding(padding)) { HomeScreen() } }
     }
 }

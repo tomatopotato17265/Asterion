@@ -37,11 +37,13 @@ import androidx.compose.ui.unit.dp
 import dev.tomatopotato.asterion.AccountViewModel
 import dev.tomatopotato.asterion.AddAccountViewModel
 import dev.tomatopotato.asterion.R
+import dev.tomatopotato.asterion.TabsViewModel
 
 @Composable
 fun AccountScreen(
     account: AccountViewModel,
     addAccount: AddAccountViewModel,
+    tabs: TabsViewModel,
     onSignOut: () -> Unit,
     onAddAccount: () -> Unit,
     modifier: Modifier = Modifier,
@@ -62,6 +64,7 @@ fun AccountScreen(
 
     if (showingSettings) {
         SettingsScreen(
+            tabs = tabs,
             onBack = { showingSettings = false },
             modifier = modifier,
         )
