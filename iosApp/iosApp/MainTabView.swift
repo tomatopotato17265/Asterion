@@ -83,4 +83,5 @@ private struct GlassTabBar: ViewModifier {
         .environment(AccountStore())
         .environment(ServersStore())
         .environment(SelectedTabsStore())
+        .environment(InboxStore())
 }

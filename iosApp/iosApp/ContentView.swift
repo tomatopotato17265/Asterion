@@ -118,4 +118,5 @@ private struct GlassSheen: ViewModifier {
         .environment(AddedAccountsStore())
         .environment(ServersStore())
         .environment(SelectedTabsStore())
+        .environment(InboxStore())
 }

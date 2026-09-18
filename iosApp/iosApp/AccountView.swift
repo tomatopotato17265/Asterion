@@ -4,6 +4,7 @@ struct AccountView: View {
     @Environment(AuthController.self) private var auth
     @Environment(AccountStore.self) private var account
     @Environment(ServersStore.self) private var servers
+    @Environment(InboxStore.self) private var inbox
     @State private var confirmingSignOut = false
 
     var body: some View {
@@ -46,6 +47,7 @@ struct AccountView: View {
                 Button("Sign Out", role: .destructive) {
                     account.reset()
                     servers.reset()
+                    inbox.reset()
                     auth.signOut()
                 }
             } message: {
@@ -99,4 +101,5 @@ struct AccountView: View {
         .environment(AccountStore())
         .environment(AddedAccountsStore())
         .environment(ServersStore())
+        .environment(InboxStore())
 }
