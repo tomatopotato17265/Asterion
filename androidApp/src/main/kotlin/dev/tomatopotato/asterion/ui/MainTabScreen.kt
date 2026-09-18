@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.tomatopotato.asterion.AccountViewModel
 import dev.tomatopotato.asterion.AddAccountViewModel
+import dev.tomatopotato.asterion.NotificationsViewModel
 import dev.tomatopotato.asterion.ServersViewModel
 import dev.tomatopotato.asterion.TabsViewModel
 import dev.tomatopotato.asterion.tabs.AppTab
@@ -35,6 +36,7 @@ fun MainTabScreen(
     addAccount: AddAccountViewModel,
     servers: ServersViewModel,
     tabs: TabsViewModel,
+    inbox: NotificationsViewModel,
     onSignOut: () -> Unit,
     onAddAccount: () -> Unit,
     modifier: Modifier = Modifier,
@@ -83,7 +85,7 @@ fun MainTabScreen(
                 AppTab.SERVERS -> ServersScreen(viewModel = servers)
                 AppTab.ANALYTICS -> AnalyticsScreen()
                 AppTab.PAYOUTS -> PayoutsScreen()
-                AppTab.INBOX -> InboxScreen()
+                AppTab.INBOX -> InboxScreen(viewModel = inbox)
                 AppTab.ACCOUNT -> AccountScreen(
                     account = account,
                     addAccount = addAccount,
