@@ -69,21 +69,20 @@ class MainActivity : ComponentActivity() {
                             onAddAccount = ::startAddAccount,
                         )
 
-                        AuthPhase.Authorizing, AuthPhase.Exchanging -> Box(
+                        AuthPhase.Exchanging -> Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center,
                         ) {
                             CircularProgressIndicator()
                         }
 
-                        else -> MainTabScreen(
-                            account = account,
-                            addAccount = addAccount,
-                            servers = servers,
-                            tabs = tabs,
-                            inbox = inbox,
-                            onSignOut = { account.reset(); inbox.reset(); auth.signOut() },
-                            onAddAccount = ::startAddAccount,
+                        AuthPhase.SignedOut, AuthPhase.Authorizing -> LoginScreen(
+                            onSignInClick = ::startLogin,
+                        )
+
+                        is AuthPhase.Failed -> LoginScreen(
+                            onSignInClick = ::startLogin,
+                            errorMessage = phase.message,
                         )
                     }
                 }
