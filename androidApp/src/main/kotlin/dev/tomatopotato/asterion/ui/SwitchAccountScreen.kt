@@ -1,6 +1,5 @@
 package dev.tomatopotato.asterion.ui
 
-import android.graphics.BitmapFactory
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,13 +23,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -38,9 +33,6 @@ import dev.tomatopotato.asterion.AddAccountState
 import dev.tomatopotato.asterion.AddAccountViewModel
 import dev.tomatopotato.asterion.R
 import dev.tomatopotato.asterion.StoredAccount
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.net.URL
 
 @Composable
 fun SwitchAccountScreen(
@@ -130,7 +122,7 @@ private fun AccountRow(account: StoredAccount) {
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val avatar = rememberAvatar(account.avatarUrl)
+        val avatar = rememberRemoteImage(account.avatarUrl)
         if (avatar != null) {
             Image(
                 bitmap = avatar,
@@ -152,19 +144,4 @@ private fun AccountRow(account: StoredAccount) {
             style = MaterialTheme.typography.bodyLarge,
         )
     }
-}
-
-@Composable
-private fun rememberAvatar(url: String?): ImageBitmap? {
-    val state = produceState<ImageBitmap?>(initialValue = null, key1 = url) {
-        value = url?.let { u ->
-            runCatching {
-                withContext(Dispatchers.IO) {
-                    val bytes = URL(u).openStream().use { it.readBytes() }
-                    BitmapFactory.decodeByteArray(bytes, 0, bytes.size)?.asImageBitmap()
-                }
-            }.getOrNull()
-        }
-    }
-    return state.value
 }

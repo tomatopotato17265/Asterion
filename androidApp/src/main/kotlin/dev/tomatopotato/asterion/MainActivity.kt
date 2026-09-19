@@ -27,6 +27,7 @@ class MainActivity : ComponentActivity() {
     private val servers: ServersViewModel by viewModels()
     private val tabs: TabsViewModel by viewModels()
     private val inbox: NotificationsViewModel by viewModels()
+    private val projects: ProjectsViewModel by viewModels()
     private val authTabLauncher =
         AuthTabIntent.registerActivityResultLauncher(this) { result ->
             when (result.resultCode) {
@@ -61,9 +62,11 @@ class MainActivity : ComponentActivity() {
                             servers = servers,
                             tabs = tabs,
                             inbox = inbox,
+                            projects = projects,
                             onSignOut = {
                                 account.reset()
                                 inbox.reset()
+                                projects.reset()
                                 auth.signOut()
                             },
                             onAddAccount = ::startAddAccount,

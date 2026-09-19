@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import dev.tomatopotato.asterion.AccountViewModel
 import dev.tomatopotato.asterion.AddAccountViewModel
 import dev.tomatopotato.asterion.NotificationsViewModel
+import dev.tomatopotato.asterion.ProjectsViewModel
 import dev.tomatopotato.asterion.ServersViewModel
 import dev.tomatopotato.asterion.TabsViewModel
 import dev.tomatopotato.asterion.tabs.AppTab
@@ -37,6 +38,7 @@ fun MainTabScreen(
     servers: ServersViewModel,
     tabs: TabsViewModel,
     inbox: NotificationsViewModel,
+    projects: ProjectsViewModel,
     onSignOut: () -> Unit,
     onAddAccount: () -> Unit,
     modifier: Modifier = Modifier,
@@ -81,7 +83,7 @@ fun MainTabScreen(
         Box(Modifier.fillMaxSize().padding(innerPadding)) {
             when (selected) {
                 AppTab.HOME -> HomeScreen()
-                AppTab.PROJECTS -> ProjectsScreen()
+                AppTab.PROJECTS -> ProjectsScreen(viewModel = projects)
                 AppTab.SERVERS -> ServersScreen(viewModel = servers)
                 AppTab.ANALYTICS -> AnalyticsScreen()
                 AppTab.PAYOUTS -> PayoutsScreen()
