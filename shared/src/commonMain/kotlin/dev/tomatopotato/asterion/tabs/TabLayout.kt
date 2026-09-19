@@ -6,7 +6,7 @@ object TabLayout {
     )
 
     val defaultFreeOrder: List<AppTab> = listOf(
-        AppTab.HOME, AppTab.SERVERS, AppTab.PAYOUTS
+        AppTab.HOME, AppTab.PROJECTS, AppTab.SERVERS
     )
 
     val trailingLocked: List<AppTab> = listOf(AppTab.INBOX, AppTab.ACCOUNT)

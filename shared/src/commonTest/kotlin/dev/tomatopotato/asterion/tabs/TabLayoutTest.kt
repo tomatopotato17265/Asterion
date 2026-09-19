@@ -8,7 +8,7 @@ class TabLayoutTest {
     @Test
     fun emptyInputFallsBackToDefaultOrder() {
         assertEquals(
-            listOf(AppTab.HOME, AppTab.SERVERS, AppTab.PAYOUTS, AppTab.INBOX, AppTab.ACCOUNT),
+            listOf(AppTab.HOME, AppTab.PROJECTS, AppTab.SERVERS, AppTab.INBOX, AppTab.ACCOUNT),
             TabLayout.resolveVisibleTabs(emptyList())
         )
     }
@@ -48,7 +48,7 @@ class TabLayoutTest {
     @Test
     fun shortInputIsPaddedFromDefaults() {
         assertEquals(
-            listOf(AppTab.ANALYTICS, AppTab.HOME, AppTab.SERVERS, AppTab.INBOX, AppTab.ACCOUNT),
+            listOf(AppTab.ANALYTICS, AppTab.HOME, AppTab.PROJECTS, AppTab.INBOX, AppTab.ACCOUNT),
             TabLayout.resolveVisibleTabs(listOf("analytics"))
         )
     }
