@@ -8,6 +8,7 @@ struct iOSApp: App {
     @State private var servers = ServersStore()
     @State private var selectedTabs = SelectedTabsStore()
     @State private var inbox = InboxStore()
+    @State private var projects = ProjectsStore()
 
     var body: some Scene {
         WindowGroup {
@@ -18,6 +19,7 @@ struct iOSApp: App {
                 .environment(servers)
                 .environment(selectedTabs)
                 .environment(inbox)
+                .environment(projects)
         }
     }
 }

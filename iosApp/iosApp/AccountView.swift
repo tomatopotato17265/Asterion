@@ -5,6 +5,7 @@ struct AccountView: View {
     @Environment(AccountStore.self) private var account
     @Environment(ServersStore.self) private var servers
     @Environment(InboxStore.self) private var inbox
+    @Environment(ProjectsStore.self) private var projects
     @State private var confirmingSignOut = false
 
     var body: some View {
@@ -48,6 +49,7 @@ struct AccountView: View {
                     account.reset()
                     servers.reset()
                     inbox.reset()
+                    projects.reset()
                     auth.signOut()
                 }
             } message: {
@@ -102,4 +104,5 @@ struct AccountView: View {
         .environment(AddedAccountsStore())
         .environment(ServersStore())
         .environment(InboxStore())
+        .environment(ProjectsStore())
 }
