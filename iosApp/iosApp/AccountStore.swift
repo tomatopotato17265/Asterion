@@ -10,6 +10,7 @@ final class AccountStore {
     private(set) var bio: String?
     private(set) var avatarImage: UIImage?
     private(set) var avatarTabImage: UIImage?
+    private(set) var sessionRejected = false
 
     private let client = ModrinthUserClient()
     private var didLoad = false
@@ -31,7 +32,11 @@ final class AccountStore {
                 }
             }
             didLoad = true
-        } catch {}
+        } catch {
+            if (error as NSError).kotlinError is ApiError.Unauthorized {
+                sessionRejected = true
+            }
+        }
     }
 
     func reset() {
@@ -39,6 +44,7 @@ final class AccountStore {
         bio = nil
         avatarImage = nil
         avatarTabImage = nil
+        sessionRejected = false
         didLoad = false
     }
 

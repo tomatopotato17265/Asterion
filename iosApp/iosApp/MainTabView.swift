@@ -2,7 +2,11 @@ import Shared
 import SwiftUI
 
 struct MainTabView: View {
+    @Environment(AuthController.self) private var auth
     @Environment(AccountStore.self) private var account
+    @Environment(ServersStore.self) private var servers
+    @Environment(InboxStore.self) private var inbox
+    @Environment(ProjectsStore.self) private var projects
     @Environment(SelectedTabsStore.self) private var selectedTabs
     @State private var selection: AppTab = .home
 
@@ -29,12 +33,23 @@ struct MainTabView: View {
                 .tag(AppTab.account)
         }
         .modifier(GlassTabBar())
-        .task { await account.load() }
+        .task {
+            await account.load()
+            if account.sessionRejected { signOutRejectedSession() }
+        }
         .onAppear {
             if !selectedTabs.visibleTabs.contains(selection) {
                 selection = selectedTabs.visibleTabs.first ?? .home
             }
         }
+    }
+
+    private func signOutRejectedSession() {
+        account.reset()
+        servers.reset()
+        inbox.reset()
+        projects.reset()
+        auth.signOut()
     }
 
     @ViewBuilder
@@ -80,6 +95,7 @@ private struct GlassTabBar: ViewModifier {
 
 #Preview {
     MainTabView()
+        .environment(AuthController())
         .environment(AccountStore())
         .environment(ServersStore())
         .environment(SelectedTabsStore())

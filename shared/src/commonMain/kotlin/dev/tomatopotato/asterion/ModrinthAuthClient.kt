@@ -31,6 +31,7 @@ class ModrinthAuthClient {
         install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
     }
 
+    @Throws(Throwable::class)
     suspend fun exchangeCode(code: String): ModrinthToken =
         http.post(AuthConfig.TOKEN_ENDPOINT) {
             contentType(ContentType.Application.Json)
