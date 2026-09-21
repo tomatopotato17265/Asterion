@@ -42,7 +42,12 @@ struct ProjectsView: View {
                 ScrollView {
                     LazyVStack(spacing: 12) {
                         ForEach(list, id: \.id) { project in
-                            ProjectCard(project: project)
+                            NavigationLink {
+                                ProjectDetailView(project: project)
+                            } label: {
+                                ProjectCard(project: project)
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
                     .padding(16)
@@ -59,7 +64,7 @@ private struct ProjectCard: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            icon
+            ProjectIcon(url: project.iconUrl, size: 56)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(project.title)
@@ -68,31 +73,45 @@ private struct ProjectCard: View {
                     Text(project.description_)
                         .font(.inter(.regular, size: 14, relativeTo: .subheadline))
                         .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.leading)
                 }
+                ProjectStatusBadge(project: project)
+                    .padding(.top, 2)
             }
 
             Spacer(minLength: 0)
+
+            Image(systemName: "chevron.right")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(.tertiary)
+                .frame(maxHeight: .infinity)
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .accessibilityElement(children: .combine)
+        .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
+}
 
-    private var icon: some View {
-        AsyncImage(url: project.iconUrl.flatMap(URL.init(string:))) { phase in
+struct ProjectIcon: View {
+    let url: String?
+    let size: CGFloat
+
+    var body: some View {
+        AsyncImage(url: url.flatMap(URL.init(string:))) { phase in
             switch phase {
             case let .success(image):
                 image.resizable().scaledToFill()
             default:
                 Image(systemName: "shippingbox")
-                    .font(.system(size: 22))
+                    .font(.system(size: size * 0.4))
                     .foregroundStyle(.secondary)
             }
         }
-        .frame(width: 56, height: 56)
+        .frame(width: size, height: size)
         .background(Color(.tertiarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: size * 0.21, style: .continuous))
+        .accessibilityHidden(true)
     }
 }
 
