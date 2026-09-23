@@ -31,8 +31,10 @@ Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
 
 ### Credits
 
-This project was made possible thanks to the [Modrinth API](https://docs.modrinth.com/api/) and [Modrinth being open-source](https://github.com/modrinth/code).
+#### Dependencies
+- [Citadel](https://github.com/orlandos-nl/Citadel): An SSH Client & Server framework in Swift
 
-MASSIVE thanks to **samalando1034** on Discord for providing his server for testing purposes.
-
-Made with [Kotlin Multiplatform](https://kotlinlang.org/multiplatform/)
+#### Acknowledgments
+- Built with [Kotlin Multiplatform](https://kotlinlang.org/multiplatform/)
+- Made possible thanks to the [Modrinth API](https://docs.modrinth.com/api/)
+- Special thanks to **samalando1034** on Discord for providing his Modrinth server for testing
