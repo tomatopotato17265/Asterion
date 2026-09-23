@@ -1,4 +1,4 @@
-package dev.tomatopotato.asterion
+package dev.tomatopotato.asterion.viewmodel
 
 import android.app.Application
 import androidx.compose.runtime.getValue
@@ -11,6 +11,7 @@ import dev.tomatopotato.asterion.net.isPermissionError
 import dev.tomatopotato.asterion.net.userMessage
 import dev.tomatopotato.asterion.notifications.ModrinthNotification
 import dev.tomatopotato.asterion.notifications.NotificationsFacade
+import dev.tomatopotato.asterion.service.TokenStore
 import kotlinx.coroutines.launch
 
 sealed interface InboxState {

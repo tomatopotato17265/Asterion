@@ -1,4 +1,4 @@
-package dev.tomatopotato.asterion
+package dev.tomatopotato.asterion.viewmodel
 
 import android.app.Application
 import android.net.Uri
@@ -8,6 +8,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import dev.tomatopotato.asterion.AuthConfig
+import dev.tomatopotato.asterion.ModrinthAuthClient
+import dev.tomatopotato.asterion.service.TokenStore
 import kotlinx.coroutines.launch
 
 sealed interface AuthPhase {

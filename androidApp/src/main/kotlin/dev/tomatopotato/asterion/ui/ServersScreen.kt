@@ -37,12 +37,12 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.Image
-import dev.tomatopotato.asterion.ServersState
-import dev.tomatopotato.asterion.ServersViewModel
 import dev.tomatopotato.asterion.servers.ArchonServer
 import dev.tomatopotato.asterion.servers.DefaultServerIcon
 import dev.tomatopotato.asterion.servers.connectionSummary
 import dev.tomatopotato.asterion.servers.loadServerIcon
+import dev.tomatopotato.asterion.viewmodel.ServersState
+import dev.tomatopotato.asterion.viewmodel.ServersViewModel
 
 private val defaultServerIconBitmap: Bitmap by lazy {
     val bytes = Base64.decode(DefaultServerIcon.base64, Base64.DEFAULT)

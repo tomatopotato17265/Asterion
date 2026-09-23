@@ -19,6 +19,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import dev.tomatopotato.asterion.ui.AsterionTheme
 import dev.tomatopotato.asterion.ui.LoginScreen
 import dev.tomatopotato.asterion.ui.MainTabScreen
+import dev.tomatopotato.asterion.viewmodel.AccountViewModel
+import dev.tomatopotato.asterion.viewmodel.AddAccountViewModel
+import dev.tomatopotato.asterion.viewmodel.AuthPhase
+import dev.tomatopotato.asterion.viewmodel.AuthViewModel
+import dev.tomatopotato.asterion.viewmodel.NotificationsViewModel
+import dev.tomatopotato.asterion.viewmodel.ProjectsViewModel
+import dev.tomatopotato.asterion.viewmodel.ServersViewModel
+import dev.tomatopotato.asterion.viewmodel.TabsViewModel
 
 class MainActivity : ComponentActivity() {
     private val auth: AuthViewModel by viewModels()

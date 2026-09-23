@@ -1,4 +1,4 @@
-package dev.tomatopotato.asterion
+package dev.tomatopotato.asterion.viewmodel
 
 import android.app.Application
 import android.content.SharedPreferences
@@ -10,6 +10,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import dev.tomatopotato.asterion.AuthConfig
+import dev.tomatopotato.asterion.ModrinthAuthClient
+import dev.tomatopotato.asterion.ModrinthUserClient
+import dev.tomatopotato.asterion.model.StoredAccount
+import dev.tomatopotato.asterion.service.TokenStore
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject

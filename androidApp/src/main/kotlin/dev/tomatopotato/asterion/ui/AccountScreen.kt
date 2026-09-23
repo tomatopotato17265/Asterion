@@ -34,10 +34,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.tomatopotato.asterion.AccountViewModel
-import dev.tomatopotato.asterion.AddAccountViewModel
 import dev.tomatopotato.asterion.R
-import dev.tomatopotato.asterion.TabsViewModel
+import dev.tomatopotato.asterion.viewmodel.AccountViewModel
+import dev.tomatopotato.asterion.viewmodel.AddAccountViewModel
+import dev.tomatopotato.asterion.viewmodel.TabsViewModel
 
 @Composable
 fun AccountScreen(

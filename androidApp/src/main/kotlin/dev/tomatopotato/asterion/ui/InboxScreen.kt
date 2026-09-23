@@ -24,9 +24,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.tomatopotato.asterion.InboxState
-import dev.tomatopotato.asterion.NotificationsViewModel
 import dev.tomatopotato.asterion.notifications.ModrinthNotification
+import dev.tomatopotato.asterion.viewmodel.InboxState
+import dev.tomatopotato.asterion.viewmodel.NotificationsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

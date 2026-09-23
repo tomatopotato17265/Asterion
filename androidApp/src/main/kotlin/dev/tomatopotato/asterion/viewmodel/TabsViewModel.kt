@@ -1,4 +1,4 @@
-package dev.tomatopotato.asterion
+package dev.tomatopotato.asterion.viewmodel
 
 import android.app.Application
 import androidx.compose.runtime.getValue

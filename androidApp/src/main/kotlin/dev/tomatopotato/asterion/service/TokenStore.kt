@@ -1,4 +1,4 @@
-package dev.tomatopotato.asterion
+package dev.tomatopotato.asterion.service
 
 import android.content.Context
 import android.content.SharedPreferences

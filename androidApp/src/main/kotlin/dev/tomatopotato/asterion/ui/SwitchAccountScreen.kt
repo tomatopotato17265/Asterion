@@ -29,10 +29,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import dev.tomatopotato.asterion.AddAccountState
-import dev.tomatopotato.asterion.AddAccountViewModel
 import dev.tomatopotato.asterion.R
-import dev.tomatopotato.asterion.StoredAccount
+import dev.tomatopotato.asterion.model.StoredAccount
+import dev.tomatopotato.asterion.viewmodel.AddAccountState
+import dev.tomatopotato.asterion.viewmodel.AddAccountViewModel
 
 @Composable
 fun SwitchAccountScreen(

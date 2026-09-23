@@ -28,9 +28,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.tomatopotato.asterion.ProjectsState
-import dev.tomatopotato.asterion.ProjectsViewModel
 import dev.tomatopotato.asterion.projects.ModrinthProject
+import dev.tomatopotato.asterion.viewmodel.ProjectsState
+import dev.tomatopotato.asterion.viewmodel.ProjectsViewModel
 
 @Composable
 fun ProjectsScreen(viewModel: ProjectsViewModel, modifier: Modifier = Modifier) {

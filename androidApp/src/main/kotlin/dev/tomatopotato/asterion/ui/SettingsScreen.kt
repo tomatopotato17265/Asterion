@@ -35,9 +35,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import dev.tomatopotato.asterion.R
-import dev.tomatopotato.asterion.TabsViewModel
 import dev.tomatopotato.asterion.tabs.AppTab
 import dev.tomatopotato.asterion.tabs.TabLayout
+import dev.tomatopotato.asterion.viewmodel.TabsViewModel
 import kotlin.math.roundToInt
 
 @Composable

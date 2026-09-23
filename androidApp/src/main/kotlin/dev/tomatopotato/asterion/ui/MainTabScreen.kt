@@ -23,13 +23,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.tomatopotato.asterion.AccountViewModel
-import dev.tomatopotato.asterion.AddAccountViewModel
-import dev.tomatopotato.asterion.NotificationsViewModel
-import dev.tomatopotato.asterion.ProjectsViewModel
-import dev.tomatopotato.asterion.ServersViewModel
-import dev.tomatopotato.asterion.TabsViewModel
 import dev.tomatopotato.asterion.tabs.AppTab
+import dev.tomatopotato.asterion.viewmodel.AccountViewModel
+import dev.tomatopotato.asterion.viewmodel.AddAccountViewModel
+import dev.tomatopotato.asterion.viewmodel.NotificationsViewModel
+import dev.tomatopotato.asterion.viewmodel.ProjectsViewModel
+import dev.tomatopotato.asterion.viewmodel.ServersViewModel
+import dev.tomatopotato.asterion.viewmodel.TabsViewModel
 
 @Composable
 fun MainTabScreen(

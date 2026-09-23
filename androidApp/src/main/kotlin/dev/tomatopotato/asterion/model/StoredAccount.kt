@@ -1,4 +1,4 @@
-package dev.tomatopotato.asterion
+package dev.tomatopotato.asterion.model
 
 data class StoredAccount(
     val id: String,

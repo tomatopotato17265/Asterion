@@ -1,4 +1,4 @@
-package dev.tomatopotato.asterion
+package dev.tomatopotato.asterion.viewmodel
 
 import android.app.Application
 import androidx.compose.runtime.getValue
@@ -10,6 +10,7 @@ import dev.tomatopotato.asterion.net.ApiError
 import dev.tomatopotato.asterion.projects.ModrinthProject
 import dev.tomatopotato.asterion.projects.ProjectsFacade
 import dev.tomatopotato.asterion.projects.projectsMessage
+import dev.tomatopotato.asterion.service.TokenStore
 import kotlinx.coroutines.launch
 
 sealed interface ProjectsState {
