@@ -9,14 +9,9 @@ object AuthConfig {
     const val USER_ENDPOINT: String = "https://api.modrinth.com/v2/user"
     const val AUTHORIZE_URL: String = "https://modrinth.com/auth/authorize"
     const val SCOPES: String = "USER_READ+PROJECT_READ+NOTIFICATION_READ+NOTIFICATION_WRITE"
-    const val USE_VERIFIED_HTTPS_CALLBACK: Boolean = false
-    const val HTTPS_REDIRECT_URI: String = "https://asterion.tomatopotato17265.workers.dev/callback"
     const val CALLBACK_HOST: String = "asterion.tomatopotato17265.workers.dev"
     const val CALLBACK_PATH: String = "/callback"
-    const val SCHEME_REDIRECT_URI: String = "dev.tomatopotato.asterion://oauth/callback"
-    const val CALLBACK_SCHEME: String = "dev.tomatopotato.asterion"
-    val REDIRECT_URI: String =
-        if (USE_VERIFIED_HTTPS_CALLBACK) HTTPS_REDIRECT_URI else SCHEME_REDIRECT_URI
+    const val REDIRECT_URI: String = "https://asterion.tomatopotato17265.workers.dev/callback"
 
     fun buildAuthorizeUrl(state: String): String =
         URLBuilder(AUTHORIZE_URL).apply {

@@ -104,21 +104,13 @@ class MainActivity : ComponentActivity() {
     private fun startLogin() {
         val authorizeUrl = auth.beginAuthorize()
         val authTab = AuthTabIntent.Builder().build()
-        if (AuthConfig.USE_VERIFIED_HTTPS_CALLBACK) {
-            authTab.launch(authTabLauncher, authorizeUrl, AuthConfig.CALLBACK_HOST, AuthConfig.CALLBACK_PATH)
-        } else {
-            authTab.launch(authTabLauncher, authorizeUrl, AuthConfig.CALLBACK_SCHEME)
-        }
+        authTab.launch(authTabLauncher, authorizeUrl, AuthConfig.CALLBACK_HOST, AuthConfig.CALLBACK_PATH)
     }
 
     private fun startAddAccount() {
         val authorizeUrl = addAccount.beginAuthorize()
         val authTab = AuthTabIntent.Builder().build()
-        if (AuthConfig.USE_VERIFIED_HTTPS_CALLBACK) {
-            authTab.launch(addAccountTabLauncher, authorizeUrl, AuthConfig.CALLBACK_HOST, AuthConfig.CALLBACK_PATH)
-        } else {
-            authTab.launch(addAccountTabLauncher, authorizeUrl, AuthConfig.CALLBACK_SCHEME)
-        }
+        authTab.launch(addAccountTabLauncher, authorizeUrl, AuthConfig.CALLBACK_HOST, AuthConfig.CALLBACK_PATH)
     }
 
     override fun onNewIntent(intent: Intent) {

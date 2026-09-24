@@ -33,9 +33,7 @@ final class AuthController: NSObject, ASWebAuthenticationPresentationContextProv
             return
         }
         let callback: ASWebAuthenticationSession.Callback =
-            AuthConfig.shared.USE_VERIFIED_HTTPS_CALLBACK
-            ? .https(host: AuthConfig.shared.CALLBACK_HOST, path: AuthConfig.shared.CALLBACK_PATH)
-            : .customScheme(AuthConfig.shared.CALLBACK_SCHEME)
+            .https(host: AuthConfig.shared.CALLBACK_HOST, path: AuthConfig.shared.CALLBACK_PATH)
         let session = ASWebAuthenticationSession(
             url: url,
             callback: callback
