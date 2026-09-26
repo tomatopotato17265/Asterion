@@ -45,8 +45,6 @@ If you only want to work on the Android or iOS app, you can skip this part. It's
    npm install
    ```
 
-
-> [!NOTE]
 > You can run and test the worker locally, but requests to the `/token` route (the actual OAuth exchange) will return a `server_misconfigured` error rather than a real token. This is expected and not something you need to fix in your own environment, as this requires the actual Modrinth OAuth Client Secret that only the live worker has access to.
 
 </details>
