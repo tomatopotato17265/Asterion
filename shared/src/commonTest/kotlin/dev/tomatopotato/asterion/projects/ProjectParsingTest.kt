@@ -39,10 +39,18 @@ class ProjectParsingTest {
 
     @Test
     fun presentsStatusAndTypeAsLabels() {
-        val project = ModrinthProject(id = "p", title = "P", status = "under_review", projectType = "resourcepack")
+        val project = ModrinthProject(id = "p", title = "P", status = "archived", projectType = "resourcepack")
 
-        assertEquals("Under review", project.statusLabel)
+        assertEquals("Archived", project.statusLabel)
         assertEquals("Resourcepack", project.projectTypeLabel)
+    }
+
+    @Test
+    fun processingStatusIsLabelledUnderReviewLikeModrinth() {
+        assertEquals(
+            "Under review",
+            ModrinthProject(id = "p", title = "P", status = "processing").statusLabel,
+        )
     }
 
     @Test

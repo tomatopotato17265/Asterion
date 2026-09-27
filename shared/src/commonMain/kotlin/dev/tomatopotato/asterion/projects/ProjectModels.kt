@@ -19,7 +19,7 @@ data class ModrinthProject(
     val published: String = "",
     val updated: String = "",
 ) {
-    val statusLabel: String get() = status.toLabel()
+    val statusLabel: String get() = if (status == "processing") "Under review" else status.toLabel()
 
     val statusTone: ProjectStatusTone
         get() = when (status) {
