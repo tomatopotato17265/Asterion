@@ -87,6 +87,7 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinxJson)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.datetime)
         }
         commonMain {
             kotlin.srcDir(generateDefaultServerIcon.map { generatedDefaultServerIconDir.get() })

@@ -4,6 +4,8 @@ import SwiftUI
 struct ProjectDetailView: View {
     let project: ModrinthProject
 
+    @State private var analytics = ProjectAnalyticsStore()
+
     var body: some View {
         List {
             Section {
@@ -27,6 +29,10 @@ struct ProjectDetailView: View {
                 row("Published", Self.date(project.published))
                 row("Updated", Self.date(project.updated))
             }
+
+            Section("Analytics") {
+                ProjectDownloadsChart(state: analytics.state)
+            }
         }
         .navigationTitle(project.title)
         .navigationBarTitleDisplayMode(.inline)
@@ -40,6 +46,7 @@ struct ProjectDetailView: View {
                 }
             }
         }
+        .task { await analytics.load(projectId: project.id) }
     }
 
     private var header: some View {
