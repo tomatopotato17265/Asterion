@@ -34,6 +34,8 @@ struct ProjectDetailView: View {
                 ProjectDownloadsChart(state: analytics.state)
             }
         }
+
+        .contentMargins(.bottom, 24, for: .scrollContent)
         .navigationTitle(project.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
