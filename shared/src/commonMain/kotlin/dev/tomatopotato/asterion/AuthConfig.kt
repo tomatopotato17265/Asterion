@@ -8,7 +8,7 @@ object AuthConfig {
     const val TOKEN_ENDPOINT: String = "https://asterion.tomatopotato17265.workers.dev/token"
     const val USER_ENDPOINT: String = "https://api.modrinth.com/v2/user"
     const val AUTHORIZE_URL: String = "https://modrinth.com/auth/authorize"
-    const val SCOPES: String = "USER_READ+PROJECT_READ+ANALYTICS+NOTIFICATION_READ+NOTIFICATION_WRITE"
+    const val SCOPES: String = "USER_READ+PROJECT_READ+ANALYTICS+PAYOUTS_READ+NOTIFICATION_READ+NOTIFICATION_WRITE"
     const val CALLBACK_HOST: String = "asterion.tomatopotato17265.workers.dev"
     const val CALLBACK_PATH: String = "/callback"
     const val REDIRECT_URI: String = "https://asterion.tomatopotato17265.workers.dev/callback"
