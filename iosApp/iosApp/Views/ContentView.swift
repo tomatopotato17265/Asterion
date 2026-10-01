@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(AuthController.self) private var auth
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         content
@@ -17,9 +18,10 @@ struct ContentView: View {
         switch auth.phase {
         case .signedIn:
             MainTabView()
-        case .exchanging:
-            ProgressView()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .task { await auth.refreshSessionIfNeeded() }
+                .onChange(of: scenePhase) { _, phase in
+                    if phase == .active { Task { await auth.refreshSessionIfNeeded() } }
+                }
         case .signedOut, .authenticating, .failed:
             loginView
         }
@@ -40,6 +42,14 @@ struct ContentView: View {
     private var loginView: some View {
         VStack(spacing: 12) {
             Spacer()
+
+            if auth.needsReSignIn {
+                Text("Asterion now signs in the same way as the Modrinth App, so it can control your servers. Please sign in again.")
+                    .font(.inter(.regular, size: 15, relativeTo: .body))
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 8)
+            }
 
             Button {
                 auth.signIn()
