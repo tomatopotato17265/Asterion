@@ -62,7 +62,7 @@ jobs:
           set -o pipefail
           xcodebuild -resolvePackageDependencies \
             -project iosApp/iosApp.xcodeproj \
-            -scheme iosApp \
+            -scheme "iOS App" \
             -clonedSourcePackagesDirPath .spm-packages \
             | tee resolve-packages.log
 
@@ -78,7 +78,7 @@ jobs:
           set -o pipefail
           xcodebuild \
             -project iosApp/iosApp.xcodeproj \
-            -scheme iosApp \
+            -scheme "iOS App" \
             -destination 'platform=iOS Simulator,name=iPhone 16' \
             -configuration Debug \
             -clonedSourcePackagesDirPath .spm-packages \
