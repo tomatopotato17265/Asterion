@@ -7,7 +7,7 @@ final class ProjectAnalyticsStore {
 
     enum State {
         case loading
-        case loaded([DailyDownloads])
+        case loaded([ProjectMetricSeries])
         case failed(String)
     }
 
@@ -26,7 +26,7 @@ final class ProjectAnalyticsStore {
     func refresh(projectId: String) async {
         state = .loading
         do {
-            state = .loaded(try await facade.downloadsOverLast30Days(projectId: projectId))
+            state = .loaded(try await facade.projectMetrics(projectId: projectId))
         } catch {
             state = .failed(Self.message(for: error))
         }
