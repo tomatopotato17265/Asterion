@@ -77,6 +77,30 @@ class ArchonClient(
         )
     }
 
+    /** Node host + short-lived JWT for the server's console WebSocket. */
+    suspend fun getWebSocketAuth(serverId: String): NodeAuth =
+        apiCall(
+            block = { http.get("$baseUrl/$V0/servers/$serverId/ws") { archonHeaders() } },
+            parse = { it.body() },
+        )
+
+    suspend fun getFilesystemAuth(serverId: String): NodeAuth =
+        apiCall(
+            block = { http.get("$baseUrl/$V0/servers/$serverId/fs") { archonHeaders() } },
+            parse = { it.body() },
+        )
+
+    suspend fun downloadNodeFile(auth: NodeAuth, path: String): ByteArray =
+        apiCall(
+            block = {
+                http.get("${auth.baseUrl}/$V0/fs/download") {
+                    header("Authorization", "Bearer ${auth.token}")
+                    parameter("path", path)
+                }
+            },
+            parse = { it.body() },
+        )
+
     private suspend fun HttpRequestBuilder.archonHeaders() {
         val token = tokenProvider.token() ?: throw ApiError.Unauthorized("No Modrinth token stored")
         header("Authorization", "Bearer $token")

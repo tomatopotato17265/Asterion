@@ -40,6 +40,23 @@ data class ArchonServer(
         }
 }
 
+@Serializable
+data class NodeAuth(val url: String, val token: String) {
+    val baseUrl: String
+        get() {
+            val stripped = url.replace(NODE_FS_SUFFIX, "")
+            return if (stripped.startsWith("http://", true) || stripped.startsWith("https://", true)) {
+                stripped
+            } else {
+                "https://$stripped"
+            }
+        }
+
+    private companion object {
+        val NODE_FS_SUFFIX = Regex("/modrinth/v\\d+/fs/?$")
+    }
+}
+
 object ServerIconPaths {
     val candidates: List<String> = listOf("/server-icon.png", "/server-icon-original.png")
 }

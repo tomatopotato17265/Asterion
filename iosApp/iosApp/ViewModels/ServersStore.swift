@@ -1,5 +1,6 @@
 import Shared
 import SwiftUI
+import UIKit
 
 @MainActor
 @Observable
@@ -17,6 +18,8 @@ final class ServersStore {
     let facade = ServersFacade(tokenProvider: { TokenStore.accessToken() })
 
     private var didLoad = false
+    private(set) var icons: [String: UIImage] = [:]
+    private var iconRequests: Set<String> = []
 
     func load() async {
         guard !didLoad else { return }
@@ -43,9 +46,20 @@ final class ServersStore {
         return servers.first { $0.serverId == id }
     }
 
+    func loadIcon(for serverId: String) async {
+        guard icons[serverId] == nil, !iconRequests.contains(serverId) else { return }
+        iconRequests.insert(serverId)
+        guard let bytes = try? await facade.downloadServerIcon(serverId: serverId),
+              let image = UIImage(data: bytes.toNSData() as Data)
+        else { return }
+        icons[serverId] = image
+    }
+
     func reset() {
         state = .loading
         didLoad = false
+        icons = [:]
+        iconRequests = []
     }
 
     private static func isPermissionError(_ error: Error) -> Bool {

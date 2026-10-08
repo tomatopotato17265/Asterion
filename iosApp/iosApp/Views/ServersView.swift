@@ -66,7 +66,7 @@ struct ServersView: View {
 private struct ServerRow: View {
     let server: ArchonServer
 
-    @State private var iconLoader: ServerIconLoader?
+    @Environment(ServersStore.self) private var servers
 
     var body: some View {
         HStack(spacing: 12) {
@@ -81,20 +81,13 @@ private struct ServerRow: View {
             }
         }
         .padding(.vertical, 4)
-        .task {
-            guard iconLoader == nil,
-                  let host = server.sftpHost, let user = server.sftpUsername, let pass = server.sftpPassword
-            else { return }
-            let loader = ServerIconLoader(host: host, username: user, password: pass)
-            iconLoader = loader
-            loader.load()
-        }
+        .task { await servers.loadIcon(for: server.serverId) }
     }
 
     @ViewBuilder
     private var icon: some View {
         Group {
-            if let image = iconLoader?.image {
+            if let image = servers.icons[server.serverId] {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFill()

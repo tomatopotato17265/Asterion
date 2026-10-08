@@ -4,6 +4,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.request.header
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
@@ -45,6 +46,14 @@ fun asterionHttpClient(
     }
 }
 
+// No HttpTimeout here: a stopped server can leave the console socket silent for minutes, and
+// the REST client's 30s socket timeout would tear it down. Pings keep the connection alive.
+fun asterionSocketClient(): HttpClient = HttpClient {
+    install(WebSockets) { pingIntervalMillis = 20_000 }
+    defaultRequest {
+        header(HttpHeaders.UserAgent, ASTERION_USER_AGENT)
+    }
+}
 suspend fun <T> apiCall(
     block: suspend () -> HttpResponse,
     parse: suspend (HttpResponse) -> T,
