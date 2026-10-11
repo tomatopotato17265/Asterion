@@ -45,6 +45,29 @@ struct AccountView: View {
                         }
                         .buttonStyle(.plain)
                     }
+
+                    if let url = URL(string: AppLinks.shared.GITHUB_URL) {
+                        Button {
+                            openURL(url)
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image("GitHubMark")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 20, height: 20)
+                                    .foregroundStyle(.primary)
+                                Text(AppLinks.shared.GITHUB_TITLE)
+                                    .font(.inter(.regular, size: 17, relativeTo: .body))
+                                    .foregroundStyle(.primary)
+                                Spacer()
+                                Image(systemName: "arrow.up.right")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundStyle(.tertiary)
+                            }
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
 
                 Section {
