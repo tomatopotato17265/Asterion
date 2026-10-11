@@ -1,3 +1,4 @@
+import Shared
 import SwiftUI
 
 struct AccountView: View {
@@ -6,6 +7,7 @@ struct AccountView: View {
     @Environment(ServersStore.self) private var servers
     @Environment(InboxStore.self) private var inbox
     @Environment(ProjectsStore.self) private var projects
+    @Environment(\.openURL) private var openURL
     @State private var confirmingSignOut = false
 
     var body: some View {
@@ -22,6 +24,26 @@ struct AccountView: View {
                     } label: {
                         Text("Settings")
                             .font(.inter(.regular, size: 17, relativeTo: .body))
+                    }
+                }
+
+                Section {
+                    if let url = URL(string: AppLinks.shared.PRIVACY_POLICY_URL) {
+                        Button {
+                            openURL(url)
+                        } label: {
+                            HStack {
+                                Text(AppLinks.shared.PRIVACY_POLICY_TITLE)
+                                    .font(.inter(.regular, size: 17, relativeTo: .body))
+                                    .foregroundStyle(.primary)
+                                Spacer()
+                                Image(systemName: "arrow.up.right")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundStyle(.tertiary)
+                            }
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
 

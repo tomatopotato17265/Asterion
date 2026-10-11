@@ -32,8 +32,10 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.tomatopotato.asterion.AppLinks
 import dev.tomatopotato.asterion.R
 import dev.tomatopotato.asterion.viewmodel.AccountViewModel
 import dev.tomatopotato.asterion.viewmodel.AddAccountViewModel
@@ -51,6 +53,7 @@ fun AccountScreen(
     var confirmingSignOut by rememberSaveable { mutableStateOf(false) }
     var showingSwitchAccount by rememberSaveable { mutableStateOf(false) }
     var showingSettings by rememberSaveable { mutableStateOf(false) }
+    val uriHandler = LocalUriHandler.current
 
     if (showingSwitchAccount) {
         SwitchAccountScreen(
@@ -105,6 +108,33 @@ fun AccountScreen(
                 )
                 Icon(
                     painter = painterResource(R.drawable.ic_chevron_right),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
+        }
+
+        Surface(
+            shape = RoundedCornerShape(28.dp),
+            color = MaterialTheme.colorScheme.surfaceContainer,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { uriHandler.openUri(AppLinks.PRIVACY_POLICY_URL) }
+                    .padding(horizontal = 20.dp, vertical = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = AppLinks.PRIVACY_POLICY_TITLE,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f),
+                )
+                Icon(
+                    painter = painterResource(R.drawable.ic_arrow_outward),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(20.dp),
