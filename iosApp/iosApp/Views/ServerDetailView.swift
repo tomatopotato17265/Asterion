@@ -10,6 +10,8 @@ struct ServerDetailView: View {
     @State private var confirmingKill = false
     @State private var expandedConsole = false
     @State private var copiedAddress = false
+    @State private var selectedTab: ServerTab = .overview
+    @State private var content: ServerContentModel?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -23,13 +25,26 @@ struct ServerDetailView: View {
                 )
             }
 
-            powerControls
-            statCards
+            ServerTabBar(selection: $selectedTab)
 
-            if let console {
-                ConsolePanel(model: console, isExpanded: false) { expandedConsole = true }
-                    .padding(.bottom, 8)
-            } else {
+            switch selectedTab {
+            case .overview:
+                powerControls
+                statCards
+
+                if let console {
+                    ConsolePanel(model: console, isExpanded: false) { expandedConsole = true }
+                        .padding(.bottom, 8)
+                } else {
+                    Spacer()
+                }
+            case .content:
+                if let content {
+                    ServerContentTab(model: content)
+                } else {
+                    Spacer()
+                }
+            default:
                 Spacer()
             }
         }
@@ -50,6 +65,9 @@ struct ServerDetailView: View {
             let model = console ?? ServerConsoleModel(serverId: server.serverId, facade: servers.facade)
             console = model
             model.start()
+            if content == nil {
+                content = ServerContentModel(serverId: server.serverId, facade: servers.facade)
+            }
         }
         .onDisappear {
             console?.stop()
@@ -255,29 +273,27 @@ struct ServerDetailView: View {
     private var statCards: some View {
         let stats = powerState == .running ? console?.snapshot?.stats : nil
         let lastKnown = console?.snapshot?.stats
-        return HStack(spacing: 8) {
-            StatCard(
+        return HStack(spacing: 0) {
+            StatColumn(
                 title: "CPU",
-                systemImage: "cpu",
-                value: String(format: "%.2f%%", stats?.cpuPercent ?? 0),
-                detail: nil,
+                value: stats.map { String(format: "%.0f%%", $0.cpuPercent) } ?? "—",
                 progress: (stats?.cpuPercent ?? 0) / 100
             )
-            StatCard(
+            Divider().padding(.vertical, 10)
+            StatColumn(
                 title: "Memory",
-                systemImage: "memorychip",
-                value: String(format: "%.2f%%", Self.fraction(stats?.ramUsageBytes, of: stats?.ramTotalBytes) * 100),
-                detail: stats.map { Self.formatBytes($0.ramUsageBytes) },
+                value: stats.map { Self.formatBytes($0.ramUsageBytes) } ?? "—",
                 progress: Self.fraction(stats?.ramUsageBytes, of: stats?.ramTotalBytes)
             )
-            StatCard(
+            Divider().padding(.vertical, 10)
+            StatColumn(
                 title: "Storage",
-                systemImage: "folder",
                 value: lastKnown.map { Self.formatBytes($0.storageUsageBytes) } ?? "—",
-                detail: lastKnown.flatMap { $0.storageTotalBytes > 0 ? "of \(Self.formatBytes($0.storageTotalBytes))" : nil },
                 progress: Self.fraction(lastKnown?.storageUsageBytes, of: lastKnown?.storageTotalBytes)
             )
         }
+        .fixedSize(horizontal: false, vertical: true)
+        .background(Color(.tertiarySystemBackground), in: RoundedRectangle(cornerRadius: 14))
     }
 
     private static func fraction(_ used: Int64?, of total: Int64?) -> Double {
@@ -299,50 +315,33 @@ struct ServerDetailView: View {
 
 // MARK: - Stat card
 
-private struct StatCard: View {
+private struct StatColumn: View {
     let title: String
-    let systemImage: String
     let value: String
-    let detail: String?
     let progress: Double
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text(title)
-                    .font(.inter(.medium, size: 12, relativeTo: .caption))
-                    .foregroundStyle(.secondary)
-                Spacer(minLength: 0)
-                Image(systemName: systemImage)
-                    .font(.system(size: 13))
-                    .foregroundStyle(.secondary)
-            }
-
-            Text(value)
-                .font(.inter(.bold, size: 19, relativeTo: .title3))
-                .lineLimit(1)
-                .minimumScaleFactor(0.6)
-
-            Text(detail ?? " ")
-                .font(.inter(.regular, size: 11, relativeTo: .caption2))
+            Text(title)
+                .font(.inter(.medium, size: 12, relativeTo: .caption))
                 .foregroundStyle(.secondary)
+            Text(value)
+                .font(.inter(.semibold, size: 15, relativeTo: .body))
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
+            progressBar
+                .padding(.top, 2)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 12)
-        .padding(.top, 10)
-        .padding(.bottom, 13)
-        .background(Color(.tertiarySystemBackground))
-        .overlay(alignment: .bottom) { progressBar }
-        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .padding(.vertical, 10)
     }
 
     private var progressBar: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
-                Rectangle().fill(Color.accentColor.opacity(0.18))
-                Rectangle()
+                Capsule().fill(Color.accentColor.opacity(0.18))
+                Capsule()
                     .fill(Color.accentColor)
                     .frame(width: geometry.size.width * min(1, max(0, progress)))
             }
@@ -363,23 +362,17 @@ private struct ConsolePanel: View {
     var body: some View {
         let lines = model.visibleLines()
         VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Text("Console")
-                    .font(.inter(.bold, size: 20, relativeTo: .title3))
-                Spacer()
-                Button(action: onToggleExpand) {
-                    Image(systemName: isExpanded
-                        ? "arrow.down.right.and.arrow.up.left"
-                        : "arrow.up.left.and.arrow.down.right")
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(.secondary)
-                        .frame(width: 32, height: 32)
+            if isExpanded {
+                HStack {
+                    Text("Console")
+                        .font(.inter(.bold, size: 20, relativeTo: .title3))
+                    Spacer()
+                    Button("Done", action: onToggleExpand)
+                        .font(.inter(.semibold, size: 16, relativeTo: .body))
                 }
-                .accessibilityLabel(isExpanded ? "Collapse console" : "Expand console")
             }
 
-            searchField
-            filterRow(lines)
+            toolbar(lines)
             logCard(lines)
         }
     }
@@ -408,35 +401,44 @@ private struct ConsolePanel: View {
         .background(Color(.tertiarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
     }
 
-    private func filterRow(_ lines: [ConsoleLine]) -> some View {
+    private func toolbar(_ lines: [ConsoleLine]) -> some View {
         HStack(spacing: 8) {
+            searchField
             filterButton
+            moreMenu(lines)
+        }
+    }
 
-            Spacer(minLength: 0)
-
+    private func moreMenu(_ lines: [ConsoleLine]) -> some View {
+        Menu {
             Button {
                 model.clear()
             } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 14, weight: .medium))
-                    .frame(width: 30, height: 30)
+                Label("Clear console", systemImage: "xmark")
             }
-            .accessibilityLabel("Clear console")
-
             ShareLink(item: lines.map(\.text).joined(separator: "\n")) {
-                Image(systemName: "square.and.arrow.up")
-                    .font(.system(size: 14, weight: .medium))
-                    .frame(width: 30, height: 30)
+                Label("Share logs", systemImage: "square.and.arrow.up")
             }
             .disabled(lines.isEmpty)
-            .accessibilityLabel("Share logs")
+            if !isExpanded {
+                Button(action: onToggleExpand) {
+                    Label("Expand console", systemImage: "arrow.up.left.and.arrow.down.right")
+                }
+            }
+        } label: {
+            Image(systemName: "ellipsis")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(Color.primary)
+                .frame(width: 40, height: 40)
+                .glassCapsule()
         }
-        .foregroundStyle(.secondary)
+        .menuOrder(.fixed)
+        .buttonStyle(.plain)
+        .accessibilityLabel("More console actions")
     }
 
     private var filterButton: some View {
         let active = model.filter != .all
-        let tint = active ? Color.accentColor : Color.secondary
         return Menu {
             Picker("Level", selection: $model.filter) {
                 ForEach(ServerConsoleModel.Filter.allCases) { filter in
@@ -444,16 +446,18 @@ private struct ConsolePanel: View {
                 }
             }
         } label: {
-            HStack(spacing: 14) {
+            HStack(spacing: 8) {
                 Image(systemName: "line.3.horizontal.decrease")
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(active ? Color.accentColor : Color.primary)
-                Text(active ? model.filter.rawValue : "Filter")
-                    .font(.inter(.medium, size: 15, relativeTo: .body))
-                    .foregroundStyle(tint)
+                if active {
+                    Text(model.filter.rawValue)
+                        .font(.inter(.medium, size: 15, relativeTo: .body))
+                        .foregroundStyle(Color.accentColor)
+                }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
+            .padding(.horizontal, active ? 14 : 0)
+            .frame(minWidth: 40, minHeight: 40)
             .glassCapsule()
         }
         .menuOrder(.fixed)
@@ -465,8 +469,10 @@ private struct ConsolePanel: View {
     private func logCard(_ lines: [ConsoleLine]) -> some View {
         VStack(spacing: 0) {
             logScroll(lines)
-            Divider()
-            commandBar
+            if model.canSendCommands {
+                Divider()
+                commandBar
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(.tertiarySystemBackground), in: RoundedRectangle(cornerRadius: 16))
@@ -533,35 +539,27 @@ private struct ConsolePanel: View {
                 .font(.system(size: 14))
                 .foregroundStyle(.secondary)
 
-            TextField(commandPlaceholder, text: $command)
+            TextField("Send a command", text: $command)
                 .font(.system(size: 13, design: .monospaced))
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .submitLabel(.send)
                 .onSubmit(sendCommand)
-                .disabled(!model.canSendCommands)
 
-            if model.canSendCommands {
-                Button(action: sendCommand) {
-                    Image(systemName: "arrow.up.circle.fill")
-                        .font(.system(size: 24))
-                        .foregroundStyle(
-                            command.trimmingCharacters(in: .whitespaces).isEmpty
-                                ? Color.secondary
-                                : Color.accentColor
-                        )
-                }
-                .disabled(command.trimmingCharacters(in: .whitespaces).isEmpty)
-                .accessibilityLabel("Send command")
+            Button(action: sendCommand) {
+                Image(systemName: "arrow.up.circle.fill")
+                    .font(.system(size: 24))
+                    .foregroundStyle(
+                        command.trimmingCharacters(in: .whitespaces).isEmpty
+                            ? Color.secondary
+                            : Color.accentColor
+                    )
             }
+            .disabled(command.trimmingCharacters(in: .whitespaces).isEmpty)
+            .accessibilityLabel("Send command")
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
-    }
-
-    private var commandPlaceholder: String {
-        if !model.isConnected { return "Connecting…" }
-        return model.canSendCommands ? "Send a command" : "Server is not running"
     }
 
     private func sendCommand() {
@@ -582,7 +580,7 @@ private extension ServerConsoleModel.Filter {
     }
 }
 
-private extension View {
+extension View {
     @ViewBuilder
     func glassCapsule() -> some View {
         if #available(iOS 26, *) {
