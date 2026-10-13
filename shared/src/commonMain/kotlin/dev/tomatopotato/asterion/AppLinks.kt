@@ -7,4 +7,7 @@ object AppLinks {
 
     const val GITHUB_TITLE: String = "GitHub"
     const val GITHUB_URL: String = "https://github.com/tomatopotato17265/Asterion"
+
+    const val KOFI_TITLE: String = "Ko-fi"
+    const val KOFI_URL: String = "https://ko-fi.com/s/dd4bca3ff8"
 }

@@ -128,6 +128,14 @@ fun AccountScreen(
                         .padding(horizontal = 20.dp, vertical = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_privacy_policy),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .padding(end = 12.dp)
+                            .size(20.dp),
+                    )
                     Text(
                         text = AppLinks.PRIVACY_POLICY_TITLE,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -159,6 +167,35 @@ fun AccountScreen(
                     )
                     Text(
                         text = AppLinks.GITHUB_TITLE,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.weight(1f),
+                    )
+                    Icon(
+                        painter = painterResource(R.drawable.ic_arrow_outward),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+                HorizontalDivider()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { uriHandler.openUri(AppLinks.KOFI_URL) }
+                        .padding(horizontal = 20.dp, vertical = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_kofi),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .padding(end = 12.dp)
+                            .size(20.dp),
+                    )
+                    Text(
+                        text = AppLinks.KOFI_TITLE,
                         color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.weight(1f),
