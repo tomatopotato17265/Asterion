@@ -13,16 +13,12 @@ final class AuthController {
     }
 
     private(set) var phase: Phase
-    private(set) var needsReSignIn: Bool
 
     private let signInFlow = ModrinthSignIn()
     private let sessions = ModrinthSessionClient()
     private var isRefreshing = false
 
     init() {
-        let legacy = TokenStore.hasLegacyToken()
-        if legacy { TokenStore.clear() }
-        needsReSignIn = legacy
         phase = TokenStore.accessToken() != nil ? .signedIn : .signedOut
     }
 
@@ -37,7 +33,6 @@ final class AuthController {
                 }
                 TokenStore.save(session: result.token)
                 TokenStore.saveUserID(result.user.id)
-                needsReSignIn = false
                 phase = .signedIn
             } catch {
                 phase = .failed(error.localizedDescription)

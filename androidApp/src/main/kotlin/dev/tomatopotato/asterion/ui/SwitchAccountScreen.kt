@@ -44,7 +44,7 @@ fun SwitchAccountScreen(
     BackHandler(onBack = onBack)
 
     val state = addAccount.state
-    val busy = state == AddAccountState.Authorizing || state == AddAccountState.Working
+    val busy = state == AddAccountState.SigningIn || state == AddAccountState.Working
 
     Column(
         modifier = modifier

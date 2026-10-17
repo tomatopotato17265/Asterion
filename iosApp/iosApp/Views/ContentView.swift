@@ -43,14 +43,6 @@ struct ContentView: View {
         VStack(spacing: 12) {
             Spacer()
 
-            if auth.needsReSignIn {
-                Text("Asterion now signs in the same way as the Modrinth App, so it can control your servers. Please sign in again.")
-                    .font(.inter(.regular, size: 15, relativeTo: .body))
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.bottom, 8)
-            }
-
             Button {
                 auth.signIn()
             } label: {

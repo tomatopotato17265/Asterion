@@ -26,7 +26,7 @@ final class ModrinthSignIn {
         presented?.dismiss(animated: true)
         presented = nil
         guard let token else { return nil }
-        return try await LauncherRedirect.shared.verify(token: token)
+        return try await LauncherAuth.shared.verify(token: token)
     }
 
     func cancel() {
@@ -59,6 +59,7 @@ private final class SignInWebViewController: UIViewController, WKNavigationDeleg
     private let titleLabel = UILabel()
     private let failureView = UIStackView()
     private let failureLabel = UILabel()
+    private var sealKey = LauncherSealKey()
 
     /// passkeys don't work without an AASA file, so hide it instead
     private static let hidePasskeyButtonScript = """
@@ -94,6 +95,9 @@ private final class SignInWebViewController: UIViewController, WKNavigationDeleg
         configuration.websiteDataStore = .nonPersistent()
         configuration.userContentController.addUserScript(
             WKUserScript(source: Self.hidePasskeyButtonScript, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+        )
+        configuration.userContentController.addUserScript(
+            WKUserScript(source: LauncherAuth.shared.FOLLOW_HANDOFF_SCRIPT, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
         )
         webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = self
@@ -139,7 +143,12 @@ private final class SignInWebViewController: UIViewController, WKNavigationDeleg
 
     private func load() {
         failureView.isHidden = true
-        if let url = URL(string: LauncherRedirect.shared.SIGN_IN_URL) {
+        sealKey = LauncherSealKey()
+        let address = LauncherAuth.shared.signInUrl(
+            publicKeySpkiBase64Url: LauncherSealKey.base64URL(sealKey.publicKeySPKI),
+            nonce: sealKey.nonce
+        )
+        if let url = URL(string: address) {
             webView.load(URLRequest(url: url))
         }
     }
@@ -180,8 +189,39 @@ private final class SignInWebViewController: UIViewController, WKNavigationDeleg
     private func showFailure(_ error: Error) {
         let code = (error as NSError).code
         guard code != NSURLErrorCancelled, code != 102 else { return }
-        failureLabel.text = "Couldn't load the Modrinth sign-in page. Check your connection and try again."
+        showFailure(message: "Couldn't load the Modrinth sign-in page. Check your connection and try again.")
+    }
+
+    private func showFailure(message: String) {
+        failureLabel.text = message
         failureView.isHidden = false
+    }
+
+    @discardableResult
+    private func catchHandoff(_ url: URL?) -> Bool {
+        guard !finished,
+              let absolute = url?.absoluteString,
+              let handoff = LauncherAuth.shared.parseHandoff(url: absolute) else { return false }
+        if let token = open(handoff) {
+            finish(with: token)
+        } else {
+            webView.stopLoading()
+            showFailure(message: "Modrinth signed you in, but Asterion couldn't finish. Please try again.")
+        }
+        return true
+    }
+
+    private func open(_ handoff: LauncherHandoff) -> String? {
+        guard handoff.nonce == sealKey.nonce,
+              let sealed = LauncherAuth.shared.parseSealed(code: handoff.code),
+              let plaintext = sealKey.open(
+                  ephemeralPublicKeySPKI: sealed.ephemeralPublicKeySpki.toNSData() as Data,
+                  iv: sealed.iv.toNSData() as Data,
+                  ciphertext: sealed.ciphertext.toNSData() as Data,
+                  tag: sealed.tag.toNSData() as Data
+              )
+        else { return nil }
+        return LauncherAuth.shared.tokenFromPlaintext(plaintext: plaintext, expectedNonce: sealKey.nonce)
     }
 
     func finish(with token: String?) {
@@ -196,10 +236,8 @@ private final class SignInWebViewController: UIViewController, WKNavigationDeleg
         decidePolicyFor navigationAction: WKNavigationAction,
         decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void
     ) {
-        let url = navigationAction.request.url
-        if let absolute = url?.absoluteString, let token = LauncherRedirect.shared.parse(url: absolute) {
+        if catchHandoff(navigationAction.request.url) {
             decisionHandler(.cancel)
-            finish(with: token)
             return
         }
         decisionHandler(.allow)

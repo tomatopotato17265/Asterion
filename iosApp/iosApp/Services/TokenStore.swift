@@ -13,17 +13,7 @@ enum TokenStore {
         Keychain.set(String(expiresAt), for: expiresAtKey)
     }
 
-    static func accessToken() -> String? {
-        guard let token = Keychain.get(tokenKey),
-              ModrinthSessionPolicy.shared.isSessionToken(token: token)
-        else { return nil }
-        return token
-    }
-
-    static func hasLegacyToken() -> Bool {
-        guard let token = Keychain.get(tokenKey) else { return false }
-        return !ModrinthSessionPolicy.shared.isSessionToken(token: token)
-    }
+    static func accessToken() -> String? { Keychain.get(tokenKey) }
 
     static func needsRefresh() -> Bool {
         guard let raw = Keychain.get(expiresAtKey), let expiresAt = Int64(raw) else { return true }

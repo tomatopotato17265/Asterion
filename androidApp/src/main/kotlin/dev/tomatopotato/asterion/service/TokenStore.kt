@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import dev.tomatopotato.asterion.auth.ModrinthSessionPolicy
 
 class TokenStore(context: Context) {
 
@@ -20,14 +21,29 @@ class TokenStore(context: Context) {
         )
     }
 
-    fun save(accessToken: String, expiresIn: Long) {
+    fun save(session: String, userId: String) {
         prefs.edit()
-            .putString(KEY_TOKEN, accessToken)
-            .putLong(KEY_EXPIRES_AT, System.currentTimeMillis() + expiresIn * 1000)
+            .putString(KEY_TOKEN, session)
+            .putLong(KEY_EXPIRES_AT, ModrinthSessionPolicy.expiresAt(nowSeconds()))
+            .putString(KEY_USER_ID, userId)
             .apply()
     }
 
+    fun saveRefreshed(session: String) {
+        prefs.edit()
+            .putString(KEY_TOKEN, session)
+            .putLong(KEY_EXPIRES_AT, ModrinthSessionPolicy.expiresAt(nowSeconds()))
+            .apply()
+    }
+    
     fun accessToken(): String? = prefs.getString(KEY_TOKEN, null)
+
+    fun needsRefresh(): Boolean {
+        if (accessToken() == null) return false
+        val expiresAt = prefs.getLong(KEY_EXPIRES_AT, 0L)
+        return expiresAt == 0L || ModrinthSessionPolicy.needsRefresh(expiresAt, nowSeconds())
+    }
+
     fun saveUserID(id: String) {
         prefs.edit().putString(KEY_USER_ID, id).apply()
     }
@@ -37,6 +53,8 @@ class TokenStore(context: Context) {
     fun clear() {
         prefs.edit().clear().apply()
     }
+
+    private fun nowSeconds(): Long = System.currentTimeMillis() / 1000
 
     private companion object {
         const val KEY_TOKEN = "modrinth.accessToken"

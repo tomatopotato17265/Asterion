@@ -1,92 +1,85 @@
 package dev.tomatopotato.asterion.viewmodel
 
 import android.app.Application
-import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import dev.tomatopotato.asterion.AuthConfig
-import dev.tomatopotato.asterion.ModrinthAuthClient
+import dev.tomatopotato.asterion.auth.LauncherRedirect
+import dev.tomatopotato.asterion.auth.ModrinthSessionClient
+import dev.tomatopotato.asterion.net.ApiError
 import dev.tomatopotato.asterion.service.TokenStore
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 sealed interface AuthPhase {
     data object SignedOut : AuthPhase
-    data object Authorizing : AuthPhase
-    data object Exchanging : AuthPhase
+    data object SigningIn : AuthPhase
+    data object Verifying : AuthPhase
     data object SignedIn : AuthPhase
     data class Failed(val message: String) : AuthPhase
 }
 
-class AuthViewModel(
-    app: Application,
-    private val handle: SavedStateHandle,
-) : AndroidViewModel(app) {
+class AuthViewModel(app: Application) : AndroidViewModel(app) {
 
-    var phase by mutableStateOf<AuthPhase>(
-        if (TokenStore(app).accessToken() != null) AuthPhase.SignedIn else AuthPhase.SignedOut
-    )
+    private val store = TokenStore(app)
+
+    var phase by mutableStateOf<AuthPhase>(AuthPhase.SignedOut)
         private set
 
-    private val auth = ModrinthAuthClient()
+    private var isRefreshing = false
 
-    private var expectedState: String
-        get() = handle["oauth_state"] ?: ""
-        set(value) {
-            handle["oauth_state"] = value
-        }
+    init {
+        if (store.accessToken() != null) phase = AuthPhase.SignedIn
+    }
 
-    fun beginAuthorize(): Uri {
-        val state = AuthConfig.generateState()
-        expectedState = state
-        phase = AuthPhase.Authorizing
-        return Uri.parse(AuthConfig.buildAuthorizeUrl(state))
+    fun beginSignIn() {
+        phase = AuthPhase.SigningIn
     }
 
     fun onCancelled() {
-        if (phase == AuthPhase.Authorizing) phase = AuthPhase.SignedOut
+        if (phase == AuthPhase.SigningIn) phase = AuthPhase.SignedOut
     }
 
-    fun onVerificationFailed() {
-        phase = AuthPhase.Failed("Link verification failed — check /.well-known/assetlinks.json")
-    }
-
-    fun onCallback(uri: Uri?) {
-        if (phase is AuthPhase.SignedIn) return
-        if (uri == null) {
-            phase = AuthPhase.Failed("Sign-in returned no data")
-            return
-        }
-        val error = uri.getQueryParameter("error")
-        val returnedState = uri.getQueryParameter("state")
-        val code = uri.getQueryParameter("code")
-        when {
-            error != null -> phase = AuthPhase.Failed("Authorization denied: $error")
-            returnedState == null || returnedState != expectedState ->
-                phase = AuthPhase.Failed("Sign-in could not be verified")
-            code == null -> phase = AuthPhase.Failed("Sign-in returned no code")
-            else -> exchange(code)
-        }
-    }
-
-    private fun exchange(code: String) {
-        phase = AuthPhase.Exchanging
+    fun onToken(token: String) {
+        if (phase != AuthPhase.SigningIn) return
+        phase = AuthPhase.Verifying
         viewModelScope.launch {
-            runCatching { auth.exchangeCode(code) }
-                .onSuccess { token ->
-                    TokenStore(getApplication()).save(token.accessToken, token.expiresIn)
-                    phase = AuthPhase.SignedIn
-                }
-                .onFailure { phase = AuthPhase.Failed(it.message ?: "Token exchange failed") }
+            try {
+                val session = LauncherRedirect.verify(token)
+                store.save(session.token, session.user.id)
+                phase = AuthPhase.SignedIn
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                phase = AuthPhase.Failed(e.message ?: "Couldn't sign in")
+            }
+        }
+    }
+
+    // sessions last two weeks, so renew one that is close to expiring. rejected renewal == signed out == no bueno
+    fun refreshSessionIfNeeded() {
+        if (phase != AuthPhase.SignedIn || isRefreshing || !store.needsRefresh()) return
+        val current = store.accessToken() ?: return
+        isRefreshing = true
+        viewModelScope.launch {
+            try {
+                store.saveRefreshed(ModrinthSessionClient().refresh(current))
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: ApiError.Unauthorized) {
+                signOut()
+            } catch (_: Throwable) {
+                // a network blip shouldn't sign anyone out. try again next time the app opens.
+            } finally {
+                isRefreshing = false
+            }
         }
     }
 
     fun signOut() {
-        expectedState = ""
-        TokenStore(getApplication()).clear()
+        store.clear()
         phase = AuthPhase.SignedOut
     }
 }

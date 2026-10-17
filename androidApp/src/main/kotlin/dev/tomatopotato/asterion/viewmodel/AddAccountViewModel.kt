@@ -2,7 +2,6 @@ package dev.tomatopotato.asterion.viewmodel
 
 import android.app.Application
 import android.content.SharedPreferences
-import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,9 +9,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import dev.tomatopotato.asterion.AuthConfig
-import dev.tomatopotato.asterion.ModrinthAuthClient
 import dev.tomatopotato.asterion.ModrinthUserClient
+import dev.tomatopotato.asterion.auth.LauncherRedirect
 import dev.tomatopotato.asterion.model.StoredAccount
 import dev.tomatopotato.asterion.service.TokenStore
 import kotlinx.coroutines.launch
@@ -21,7 +19,7 @@ import org.json.JSONObject
 
 sealed interface AddAccountState {
     data object Idle : AddAccountState
-    data object Authorizing : AddAccountState
+    data object SigningIn : AddAccountState
     data object Working : AddAccountState
     data class Failed(val message: String) : AddAccountState
 }
@@ -34,11 +32,7 @@ class AddAccountViewModel(app: Application) : AndroidViewModel(app) {
     var state by mutableStateOf<AddAccountState>(AddAccountState.Idle)
         private set
 
-    val isAwaitingCallback: Boolean get() = state == AddAccountState.Authorizing
-
-    private val authClient = ModrinthAuthClient()
     private val userClient = ModrinthUserClient()
-    private var expectedState = ""
 
     private val prefs: SharedPreferences = run {
         val key = MasterKey.Builder(app)
@@ -64,49 +58,25 @@ class AddAccountViewModel(app: Application) : AndroidViewModel(app) {
     fun contains(id: String): Boolean = accounts.any { it.id == id }
     fun token(id: String): String? = prefs.getString(tokenKey(id), null)
 
-    fun beginAuthorize(): Uri {
-        expectedState = AuthConfig.generateState()
-        state = AddAccountState.Authorizing
-        return Uri.parse(AuthConfig.buildAuthorizeUrl(expectedState))
+    fun beginSignIn() {
+        state = AddAccountState.SigningIn
     }
 
     fun onCancelled() {
-        if (state == AddAccountState.Authorizing) state = AddAccountState.Idle
-    }
-
-    fun onVerificationFailed() {
-        state = AddAccountState.Failed("Link verification failed — check /.well-known/assetlinks.json")
-    }
-
-    fun onCallback(uri: Uri?) {
-        if (state != AddAccountState.Authorizing) return
-        if (uri == null) {
-            state = AddAccountState.Failed("Sign-in returned no data")
-            return
-        }
-        val error = uri.getQueryParameter("error")
-        val returnedState = uri.getQueryParameter("state")
-        val code = uri.getQueryParameter("code")
-        when {
-            error != null -> state = AddAccountState.Failed("Authorization denied: $error")
-            returnedState == null || returnedState != expectedState ->
-                state = AddAccountState.Failed("Sign-in could not be verified")
-            code == null -> state = AddAccountState.Failed("Sign-in returned no code")
-            else -> exchange(code)
-        }
+        if (state == AddAccountState.SigningIn) state = AddAccountState.Idle
     }
 
     fun acknowledge() {
         if (state is AddAccountState.Failed) state = AddAccountState.Idle
     }
 
-    private fun exchange(code: String) {
+    fun onToken(token: String) {
+        if (state != AddAccountState.SigningIn) return
         state = AddAccountState.Working
         viewModelScope.launch {
             runCatching {
-                val token = authClient.exchangeCode(code)
-                val user = userClient.fetchCurrentUser(token.accessToken)
-                token.accessToken to user
+                val session = LauncherRedirect.verify(token)
+                session.token to session.user
             }.onSuccess { (accessToken, user) ->
                 if (knownAccountIDs().contains(user.id)) {
                     state = AddAccountState.Failed("${user.username} is already added.")
