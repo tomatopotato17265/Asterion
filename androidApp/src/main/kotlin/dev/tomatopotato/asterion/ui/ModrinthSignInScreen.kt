@@ -8,7 +8,6 @@ import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
-import android.webkit.WebResourceResponse
 import android.webkit.WebStorage
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -44,7 +43,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import dev.tomatopotato.asterion.auth.LauncherRedirect
+import dev.tomatopotato.asterion.auth.LauncherAuth
+import dev.tomatopotato.asterion.auth.LauncherSealKey
 
 private const val LOAD_FAILED = "Couldn't load the Modrinth sign-in page. Check your connection and try again."
 private const val HANDOFF_FAILED = "Modrinth signed you in, but Asterion couldn't finish. Please try again."
@@ -77,6 +77,13 @@ fun ModrinthSignInScreen(
     var failure by remember { mutableStateOf<String?>(null) }
     var webView by remember { mutableStateOf<WebView?>(null) }
     val delivered = remember { booleanArrayOf(false) }
+    // A fresh key pair and nonce per attempt; Modrinth seals the app session to them.
+    var sealKey by remember { mutableStateOf(LauncherSealKey()) }
+
+    fun load(view: WebView) {
+        sealKey = LauncherSealKey()
+        view.loadUrl(sealKey.signInUrl)
+    }
 
     fun deliver(token: String) {
         if (delivered[0]) return
@@ -137,17 +144,12 @@ fun ModrinthSignInScreen(
                                 }
                             }
                             webViewClient = object : WebViewClient() {
+                                /** Handles the `modrinth://auth` hand-off. Returns whether [url] was one. */
                                 fun catchHandoff(view: WebView, url: String?): Boolean {
-                                    if (url == null) return false
-                                    val token = LauncherRedirect.parse(url)
-                                    if (token == null) {
-                                        if (Uri.parse(url).host != LauncherRedirect.REDIRECT_HOST) return false
-                                        view.stopLoading()
-                                        failure = HANDOFF_FAILED
-                                        return true
-                                    }
+                                    val handoff = url?.let(LauncherAuth::parseHandoff) ?: return false
                                     view.stopLoading()
-                                    deliver(token)
+                                    val token = sealKey.open(handoff)
+                                    if (token != null) deliver(token) else failure = HANDOFF_FAILED
                                     return true
                                 }
 
@@ -161,30 +163,14 @@ fun ModrinthSignInScreen(
                                 }
 
                                 override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
-                                    if (catchHandoff(view, url)) return
                                     failure = null
                                     url?.let { Uri.parse(it).host }?.let { host = it }
                                 }
 
-                                override fun doUpdateVisitedHistory(view: WebView, url: String?, isReload: Boolean) {
-                                    catchHandoff(view, url)
-                                }
-
-                                override fun onPageCommitVisible(view: WebView, url: String?) {
-                                    catchHandoff(view, url)
-                                }
-
-                                override fun onReceivedHttpError(
-                                    view: WebView,
-                                    request: WebResourceRequest,
-                                    errorResponse: WebResourceResponse,
-                                ) {
-                                    if (request.isForMainFrame) catchHandoff(view, request.url.toString())
-                                }
-
                                 override fun onPageFinished(view: WebView, url: String?) {
-                                    if (catchHandoff(view, url)) return
+                                    if (url?.let { Uri.parse(it).host } != "modrinth.com") return
                                     view.evaluateJavascript(HIDE_PASSKEY_SCRIPT, null)
+                                    view.evaluateJavascript(LauncherAuth.FOLLOW_HANDOFF_SCRIPT, null)
                                 }
 
                                 override fun onReceivedError(
@@ -195,7 +181,7 @@ fun ModrinthSignInScreen(
                                     if (request.isForMainFrame) failure = LOAD_FAILED
                                 }
                             }
-                            loadUrl(LauncherRedirect.SIGN_IN_URL)
+                            load(this)
                             webView = this
                         }
                     },
@@ -222,7 +208,7 @@ fun ModrinthSignInScreen(
                         Spacer(Modifier.height(12.dp))
                         Button(onClick = {
                             failure = null
-                            webView?.loadUrl(LauncherRedirect.SIGN_IN_URL)
+                            webView?.let(::load)
                         }) { Text("Try again") }
                     }
                 }

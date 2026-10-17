@@ -36,20 +36,6 @@ class LauncherSignInTest {
     }
 
     @Test
-    fun parsesTheWebViewLauncherRedirect() {
-        assertEquals("https://modrinth.com/auth/sign-in?launcher=true", LauncherRedirect.SIGN_IN_URL)
-        assertEquals("mra_abc", LauncherRedirect.parse("https://launcher-files.modrinth.com/?code=mra_abc"))
-        assertEquals("mra_abc", LauncherRedirect.parse("https://launcher-files.modrinth.com?code=mra_abc"))
-        assertNull(LauncherRedirect.parse("https://modrinth.com/?code=mra_abc"))
-        assertNull(LauncherRedirect.parse("http://launcher-files.modrinth.com/?code=mra_abc"))
-        assertNull(LauncherRedirect.parse("https://launcher-files.modrinth.com.evil.com/?code=mra_abc"))
-        assertNull(LauncherRedirect.parse("https://launcher-files.modrinth.com/?code=mro_abc"))
-        assertNull(LauncherRedirect.parse("https://launcher-files.modrinth.com/?code=mra_"))
-        assertNull(LauncherRedirect.parse("https://launcher-files.modrinth.com/"))
-        assertNull(LauncherRedirect.parse("not a url"))
-    }
-
-    @Test
     fun sessionRefreshPolicy() {
         val issued = 1_000_000L
         val expires = ModrinthSessionPolicy.expiresAt(issued)

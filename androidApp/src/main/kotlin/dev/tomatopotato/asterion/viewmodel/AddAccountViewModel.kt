@@ -10,7 +10,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import dev.tomatopotato.asterion.ModrinthUserClient
-import dev.tomatopotato.asterion.auth.LauncherRedirect
+import dev.tomatopotato.asterion.auth.LauncherAuth
 import dev.tomatopotato.asterion.model.StoredAccount
 import dev.tomatopotato.asterion.service.TokenStore
 import kotlinx.coroutines.launch
@@ -75,7 +75,7 @@ class AddAccountViewModel(app: Application) : AndroidViewModel(app) {
         state = AddAccountState.Working
         viewModelScope.launch {
             runCatching {
-                val session = LauncherRedirect.verify(token)
+                val session = LauncherAuth.verify(token)
                 session.token to session.user
             }.onSuccess { (accessToken, user) ->
                 if (knownAccountIDs().contains(user.id)) {

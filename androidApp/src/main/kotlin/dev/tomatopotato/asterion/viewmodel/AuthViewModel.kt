@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import dev.tomatopotato.asterion.auth.LauncherRedirect
+import dev.tomatopotato.asterion.auth.LauncherAuth
 import dev.tomatopotato.asterion.auth.ModrinthSessionClient
 import dev.tomatopotato.asterion.net.ApiError
 import dev.tomatopotato.asterion.service.TokenStore
@@ -47,7 +47,7 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
         phase = AuthPhase.Verifying
         viewModelScope.launch {
             try {
-                val session = LauncherRedirect.verify(token)
+                val session = LauncherAuth.verify(token)
                 store.save(session.token, session.user.id)
                 phase = AuthPhase.SignedIn
             } catch (e: CancellationException) {
