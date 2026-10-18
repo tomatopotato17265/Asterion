@@ -23,7 +23,11 @@ class ModrinthUserClient {
     @Throws(Throwable::class)
     suspend fun fetchCurrentUser(accessToken: String): ModrinthUser =
         apiCall(
-            block = { http.get(AuthConfig.USER_ENDPOINT) { header("Authorization", accessToken) } },
+            block = { http.get(USER_ENDPOINT) { header("Authorization", accessToken) } },
             parse = { it.body() },
         )
+
+    private companion object {
+        const val USER_ENDPOINT: String = "https://api.modrinth.com/v2/user"
+    }
 }
