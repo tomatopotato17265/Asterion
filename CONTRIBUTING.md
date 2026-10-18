@@ -13,10 +13,6 @@ If you would like to suggest a feature or report a bug without contributing code
 
 [Xcode 26 or later](https://developer.apple.com/xcode/) is also required if you want to contribute to the [iOS app](./iosApp).
 
-> [!IMPORTANT]
-> Due to a bug with IntelliJ IDEA's Swift Package Manager support, the iOS app cannot be built from IntelliJ IDEA. Instead, open [iosApp.xcodeproj](./iosApp/iosApp.xcodeproj) in Xcode, and build the iOS app from there.
-
-A recent LTS version of [Node.js](https://nodejs.org/) is also required if you want to contribute to the [OAuth Cloudflare Worker](./shared/src/worker).
 
 ## Setting up a local repository
 
@@ -28,27 +24,6 @@ git clone https://github.com/tomatopotato17265/Asterion
 
 Then, open it in your IDE. Wait for the project to import and configure.
 
-<details>
-<summary>Setting up the OAuth Worker</summary>
-
-If you only want to work on the Android or iOS app, you can skip this part. It's only needed if you're contributing to the [OAuth Cloudflare Worker](./shared/src/worker).
-
-1. Navigate into the worker's folder:
-
-   ```
-   cd shared/src/worker
-   ```
-   
-2. Install the worker's dependencies, including [Wrangler](https://developers.cloudflare.com/workers/wrangler/):
-
-   ```
-   npm install
-   ```
-
-> You can run and test the worker locally, but requests to the `/token` route (the actual OAuth exchange) will return a `server_misconfigured` error rather than a real token. This is expected and not something you need to fix in your own environment, as this requires the actual Modrinth OAuth Client Secret that only the live worker has access to.
-
-</details>
-
 ## Running the apps and tests
 
 Use the run configurations provided by the run widget in your IDE's toolbar, or use the run button in your IDE's editor gutter for individual tests. Alternatively, you can also use these commands:
@@ -57,7 +32,6 @@ Use the run configurations provided by the run widget in your IDE's toolbar, or 
 - Android tests: `./gradlew :shared:testAndroidHostTest`
 - iOS app: open the [/iosApp](./iosApp) directory in Xcode and run it from there.
 - iOS tests: `./gradlew :shared:iosSimulatorArm64Test`
-- OAuth Worker: `npm run dev` from [/shared/src/worker](./shared/src/worker)
 
 ## Opening a PR
 
