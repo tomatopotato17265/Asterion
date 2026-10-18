@@ -15,6 +15,13 @@ struct AccountView: View {
             List {
                 Section {
                     profileCard
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            if let username = account.username,
+                               let url = URL(string: "https://modrinth.com/user/\(username)") {
+                                openURL(url)
+                            }
+                        }
                         .listRowInsets(EdgeInsets(top: 20, leading: 16, bottom: 20, trailing: 16))
                 }
 
@@ -148,6 +155,10 @@ struct AccountView: View {
             }
 
             Spacer(minLength: 0)
+
+            Image(systemName: "arrow.up.right")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(.tertiary)
         }
     }
 

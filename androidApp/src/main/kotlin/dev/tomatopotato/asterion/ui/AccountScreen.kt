@@ -86,6 +86,9 @@ fun AccountScreen(
             username = account.username,
             bio = account.bio,
             avatar = account.avatar,
+            onClick = account.username?.let { name ->
+                { uriHandler.openUri("https://modrinth.com/user/$name") }
+            },
         )
 
         Surface(
@@ -279,6 +282,7 @@ private fun ProfileCard(
     username: String?,
     bio: String?,
     avatar: ImageBitmap?,
+    onClick: (() -> Unit)?,
 ) {
     Surface(
         shape = RoundedCornerShape(28.dp),
@@ -286,7 +290,9 @@ private fun ProfileCard(
         modifier = Modifier.fillMaxWidth(),
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+                .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -308,7 +314,10 @@ private fun ProfileCard(
                 )
             }
 
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
                 Text(
                     text = username ?: "",
                     style = MaterialTheme.typography.titleMedium,
@@ -322,6 +331,13 @@ private fun ProfileCard(
                     )
                 }
             }
+
+            Icon(
+                painter = painterResource(R.drawable.ic_arrow_outward),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(20.dp),
+            )
         }
     }
 }
