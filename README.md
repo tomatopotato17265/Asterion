@@ -42,10 +42,6 @@ Asterion does not collect any of your data or maintain a backend of its own; how
 
 ## Credits
 
-### Dependencies
-- [Citadel](https://github.com/orlandos-nl/Citadel): An SSH Client & Server framework in Swift
-
-### Acknowledgments
 - Built with [Kotlin Multiplatform](https://kotlinlang.org/multiplatform/)
 - Made possible thanks to the [Modrinth API](https://api.modrinth.com/docs)
 - Special thanks to **samalando1034** on Discord for providing his Modrinth server for testing
