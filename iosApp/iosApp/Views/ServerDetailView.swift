@@ -25,11 +25,11 @@ struct ServerDetailView: View {
                 )
             }
 
+            powerControls
             ServerTabBar(selection: $selectedTab)
 
             switch selectedTab {
             case .overview:
-                powerControls
                 statCards
 
                 if let console {
